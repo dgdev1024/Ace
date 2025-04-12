@@ -14,6 +14,11 @@
 #include <string_view>
 #include <format>
 #include <memory>
+#include <functional>
+#include <typeindex>
+#include <vector>
+#include <queue>
+#include <unordered_map>
 #include <cstdint>
 #include <cassert>
 #include <ace.config.hpp>
