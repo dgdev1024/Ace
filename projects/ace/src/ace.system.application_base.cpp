@@ -15,7 +15,7 @@ namespace ace
     ) :
         m_fixed_timestep        { 1.0f / p_spec.frame_rate }
     {
-
+        logging::initialize(p_spec.client_name);
     }
 
     application_base::~application_base ()

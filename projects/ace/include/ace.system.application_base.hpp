@@ -16,6 +16,11 @@ namespace ace
      */
     struct application_specification
     {
+
+        /**
+         * @brief The name of the client application's logger.
+         */
+        std::string client_name = "acclient";
     
         /**
          * @brief The application's target framerate. This value is used to

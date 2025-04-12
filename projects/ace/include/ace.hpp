@@ -6,3 +6,4 @@
 #pragma once
 
 #include <ace.system.application_base.hpp>
+#include <ace.system.logging.hpp>

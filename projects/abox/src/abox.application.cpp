@@ -12,7 +12,7 @@ namespace abox
     application::application (const ace::application_specification& p_spec) :
         ace::application_base { p_spec }
     {
-
+        
     }
 
     application::~application ()

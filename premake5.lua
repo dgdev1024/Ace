@@ -16,6 +16,7 @@ workspace "Ace"
     -- Build Configuration
     configurations { "debug", "release" }
     filter { "configurations:debug" }
+        defines { "ace_debug_mode" }
         symbols "On"
     filter { "configurations:release" }
         optimize "On"

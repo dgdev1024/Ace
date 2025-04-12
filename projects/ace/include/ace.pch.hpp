@@ -7,5 +7,6 @@
 #define ACE_PCH_HPP
 
 #include <ace.config.hpp>
+#include <ace.system.logging.hpp>
 
 #endif // ACE_PCH_HPP
