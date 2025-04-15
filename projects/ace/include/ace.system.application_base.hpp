@@ -4,7 +4,7 @@
  */
 
 #pragma once
-#include <ace.common.hpp>
+#include <ace.system.event_dispatcher.hpp>
 
 namespace ace
 {
@@ -63,7 +63,28 @@ namespace ace
          */
         virtual int start ();
 
+        /**
+         * @brief Retrieves the client application's main event dispatcher.
+         * 
+         * @return A pointer to the client application's main event dispatcher.
+         */
+        event_dispatcher& main_event_dispatcher ();
+
     protected:
+
+        /**
+         * @brief A pointer to the created application instance.
+         * 
+         * There can only ever be one instance of the ACE engine's client
+         * application. If that one instance has been created, this will point
+         * to that instance.
+         */
+        static application_base* s_instance_ptr;
+
+        /**
+         * @brief A pointer to the client application's main event dispatcher.
+         */
+        std::unique_ptr<event_dispatcher> m_event_dispatcher;
 
         /**
          * @brief The application's fixed timestep.

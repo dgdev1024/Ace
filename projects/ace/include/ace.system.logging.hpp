@@ -86,6 +86,9 @@ namespace ace
 #define _ace_critical(...) \
     ::ace::logging::engine_logger()->put_to_err(::ace::log_level::critical, \
         __VA_ARGS__)
+#define _ace_throw(ex, ...) \
+    _ace_critical(__VA_ARGS__); \
+    throw ex { ace_funcsig };
 
 #define ace_info(...) \
     ::ace::logging::client_logger()->put_to_out(::ace::log_level::info, \

@@ -32,17 +32,20 @@
         (__GNUC__ * 100) + \
         (__GNUC_MINOR__)
     #define ace_compiler_string "GNU G++"
+    #define ace_funcsig __PRETTY_FUNCTION__
 #elif defined(__clang__)
     #define ace_clang
     #define ace_compiler_version \
         (__clang_major__ * 100) + \
         (__clang_minor__)
     #define ace_compiler_string "Clang++"
+    #define ace_funcsig __PRETTY_FUNCTION__
 #elif defined(_MSC_VER)
     #define ace_msvc
     #define ace_compiler_version \
         _MSC_FULL_VER
     #define ace_compiler_string "Microsoft Visual C++"
+    #define ace_funcsig __FUNCSIG__
 #else
     #error "This compiler is not yet supported."
 #endif
