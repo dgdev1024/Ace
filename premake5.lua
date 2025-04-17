@@ -61,6 +61,41 @@ workspace "Ace"
             "projects/ace/src/ace.*.cpp"
         }
 
+    -- "acepack" - Ace Engine Asset Packaging Tool
+    project "acepack"
+        
+        -- Console Application
+        kind "ConsoleApp"
+
+        -- Project Location
+        location "generated/acepack"
+
+        -- Target Directories
+        targetdir "build/bin/acepack/%{cfg.buildcfg}"
+        objdir "build/obj/acepack/%{cfg.buildcfg}"
+
+        -- Include and Library Directories
+        includedirs {
+            "vendor/lz4",
+            "projects/ace/include",
+            "projects/acepack/include"
+        }
+
+        libdirs {
+            "build/bin/lz4/%{cfg.buildcfg}",
+            "build/bin/ace/%{cfg.buildcfg}"
+        }
+
+        -- Source Files
+        files {
+            "projects/acepack/src/acepack.*.cpp"
+        }
+
+        -- Link Libraries
+        links {
+            "ace", "lz4"
+        }
+
     -- "abox" - Ace Engine Sandbox Application
     project "abox"
 

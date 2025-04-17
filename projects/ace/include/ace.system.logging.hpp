@@ -39,6 +39,11 @@ namespace ace
         static std::shared_ptr<logger>& client_logger ();
 
     private:
+
+        /**
+         * @brief Have the loggers already been initialized?
+         */
+        static bool s_initialized;
         
         /**
          * @brief The `logger` dedicated for use within the engine library.
