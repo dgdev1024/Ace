@@ -38,3 +38,6 @@ assets/
 
 # Visual Studio Code
 .vscode
+
+# Private
+.private/

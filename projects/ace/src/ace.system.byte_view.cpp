@@ -19,6 +19,82 @@ namespace ace
 
     /* Public Methods *********************************************************/
 
+    void byte_view::reset_read_cursor (const std::size_t p_cursor)
+    {
+        if (p_cursor == npos || p_cursor > m_buffer.size())
+        {
+            m_read_index = 0;
+        }
+        else
+        {
+            m_read_index = p_cursor;
+        }
+    }
+
+    byte_buffer byte_view::read_binary (std::size_t p_size) const
+    {
+        if (p_size == npos)
+        {
+            p_size = std::distance(m_buffer.begin() + m_read_index,
+                m_buffer.end());
+        }
+        else if (m_read_index + p_size > m_buffer.size())
+        {
+            _ace_throw(std::out_of_range,
+                "Byte view binary read index {} is out of range!",
+                    m_read_index);
+        }
+
+        byte_buffer l_return(p_size, 0x00);
+        std::copy(m_buffer.begin() + m_read_index,
+            m_buffer.begin() + m_read_index + p_size, l_return.begin());
+        m_read_index += p_size;
+
+        return l_return;
+    }
+
+    void byte_view::read_raw (void* p_data, const std::size_t p_size) const
+    {
+        if (p_data == nullptr || p_size == 0)
+        {
+            _ace_throw(std::invalid_argument, "Data and/or size is not valid!");
+        }
+
+        if (m_read_index + p_size > m_buffer.size())
+        {
+            _ace_throw(std::out_of_range,
+                "Byte view raw read index {} is out of range!",
+                    m_read_index);
+        }
+
+        std::memcpy(p_data, m_buffer.data() + m_read_index, p_size);
+        m_read_index += p_size;
+    }
+
+    void byte_view::push_binary (const byte_buffer& p_buffer, std::size_t p_size)
+    {
+        if (p_size == npos || p_size > p_buffer.size())
+        {
+            p_size = p_buffer.size();
+        }
+
+        auto l_old_size = m_buffer.size();
+        m_buffer.resize(l_old_size + p_size);
+        std::copy(p_buffer.begin(), p_buffer.end(), m_buffer.begin() + l_old_size);
+    }
+
+    void byte_view::push_raw (const void* p_data, const std::size_t p_size)
+    {
+        if (p_data == nullptr || p_size == 0)
+        {
+            _ace_throw(std::invalid_argument, "Data and/or size is not valid!");
+        }
+
+        auto l_old_size = m_buffer.size();
+        m_buffer.resize(l_old_size + p_size);
+        std::memcpy(m_buffer.data() + l_old_size, p_data, p_size);
+    }
+
     template <>
     const std::uint8_t byte_view::read<std::uint8_t> () const
     {
@@ -152,16 +228,21 @@ namespace ace
     template <>
     const std::string byte_view::read<std::string> () const
     {
-        std::string l_return = "";
-        while (m_read_index < m_buffer.size())
+        auto l_iter = std::find(m_buffer.begin() + m_read_index, m_buffer.end(),
+            0x00);
+        if (l_iter == m_buffer.end())
         {
-            char l_char = read<char>();
-            if (l_char == '\0') { break; }
-
-            l_return += l_char;
+            _ace_throw(std::out_of_range, 
+                "Byte view read string at index {} is not null-terminated!", 
+                    m_read_index);
         }
 
-        return l_return;
+        std::string l_result;
+        l_result.resize(l_iter - (m_buffer.begin() + m_read_index));
+        std::copy(m_buffer.begin() + m_read_index, l_iter, l_result.begin());
+        m_read_index = std::distance(m_buffer.begin(), l_iter) + 1;
+
+        return l_result;
     }
 
     template <>
@@ -250,12 +331,9 @@ namespace ace
     template <>
     void byte_view::push<std::string> (const std::string& p_data)
     {
-        for (const char& l_char : p_data)
-        {
-            push<char>(l_char);
-        }
-
-        push<std::uint8_t>(0x00);
+        auto l_old_size = m_buffer.size();
+        m_buffer.resize(m_buffer.size() + p_data.length() + 1, 0x00);
+        std::copy(p_data.begin(), p_data.end(), m_buffer.begin() + l_old_size);
     }
 
 }

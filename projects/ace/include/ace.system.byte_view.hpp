@@ -23,12 +23,59 @@ namespace ace
     class ace_api byte_view
     {
     public:
+
+        static constexpr std::size_t npos = static_cast<std::size_t>(-1);
+
+    public:
         
         /**
          * @brief   Constructs a `byte_view` which views the given byte buffer.
          * @param   p_buffer    The byte buffer to view into.
          */
         explicit byte_view (byte_buffer& p_buffer);
+
+        /**
+         * @brief   Resets the read cursor to the given position.
+         * @param   p_cursor    The new position of the read cursor.
+         */
+        void reset_read_cursor (const std::size_t p_cursor = 0);
+
+        /**
+         * @brief   Reads some binary data of the given size from the byte buffer
+         *          being viewed, copying that data into a separate byte buffer
+         *          to be returned.
+         * @param   p_size      The size of the data to be read and copied.
+         * @return  A byte buffer containing the copied data.
+         */
+        byte_buffer read_binary (std::size_t p_size = npos) const;
+
+        /**
+         * @brief   Reads some raw data of the given size from the byte buffer
+         *          being viewed.
+         * @param   p_data      If successful, a pointer to the buffer to hold
+         *                      the data which was read.
+         * @param   p_size      The size of the data being read, in bytes.
+         * @warning Do not use this function unless you know EXACTLY what you
+         *          are doing!
+         */
+        void read_raw (void* p_data, const std::size_t p_size) const;
+
+        /**
+         * @brief   Pushes some binary data of the given size into the byte buffer
+         *          being viewed.
+         * @param   p_buffer    A handle to the byte buffer to be copied.
+         * @param   p_size      The size of the data to be pushed.
+         */
+        void push_binary (const byte_buffer& p_buffer, std::size_t p_size = npos);
+
+        /**
+         * @brief   Pushes some raw data into the byte buffer being viewed.
+         * @param   p_data      A pointer to the raw data being pushed.
+         * @param   p_size      The size, in bytes, of the data being pushed.
+         * @warning Do not use this function unless you know EXACTLY what you
+         *          are doing!
+         */
+        void push_raw (const void* p_data, const std::size_t p_size);
 
         /**
          * @brief   Reads some data of the given `type` from the byte buffer

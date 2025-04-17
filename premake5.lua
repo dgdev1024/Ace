@@ -22,6 +22,17 @@ workspace "Ace"
         optimize "On"
     filter {}
 
+    -- Dependency: "lz4" - Compression Library
+    project "lz4"
+        kind "SharedLib"
+        language "C"
+        cdialect "C17"
+        location "generated/lz4"
+        targetdir "build/bin/lz4/%{cfg.buildcfg}"
+        objdir "build/obj/lz4/%{cfg.buildcfg}"
+        includedirs { "vendor/lz4" }
+        files { "vendor/lz4/*.c" }
+
     -- "ace" - Ace Engine Library
     project "ace"
 
@@ -41,6 +52,7 @@ workspace "Ace"
 
         -- Include Directories
         includedirs {
+            "vendor/lz4",
             "projects/ace/include"
         }
 
@@ -64,11 +76,13 @@ workspace "Ace"
 
         -- Include and Library Directories
         includedirs {
+            "vendor/lz4",
             "projects/ace/include",
             "projects/abox/include"
         }
 
         libdirs {
+            "build/bin/lz4/%{cfg.buildcfg}",
             "build/bin/ace/%{cfg.buildcfg}"
         }
 
@@ -79,6 +93,6 @@ workspace "Ace"
 
         -- Link Libraries
         links {
-            "ace"
+            "ace", "lz4"
         }
         
