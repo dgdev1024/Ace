@@ -33,6 +33,29 @@ namespace ace
 
         return l_result;
     }
+
+    bool asset_reader::has_asset (const std::string& p_name) const
+    {
+        if (p_name.empty() == true)
+        {
+            _ace_error("Cannot check for asset - asset name string is blank.");
+            return false;
+        }
+        else if (p_name.length() >= asset_name_max_strlen)
+        {
+            _ace_error("Cannot check for asset - asset name string is too long.");
+            return false;
+        }
+
+        auto l_iter = std::find_if(m_asset_info.begin(), m_asset_info.end(),
+            [&] (const asset_information& l_info)
+            {
+                return std::strncmp(p_name.c_str(), l_info.name,
+                    asset_name_max_strlen) == 0;
+            }
+        );
+        return (l_iter != m_asset_info.end());
+    }
     
     bool asset_reader::read_asset (const std::string& p_name, byte_buffer& p_buffer) const
     {
@@ -59,8 +82,6 @@ namespace ace
         );
         if (l_iter == m_asset_info.end())
         {
-            _ace_error("Cannot read asset - asset with name '{}' not found.",
-                p_name);
             return false;
         }
 

@@ -35,13 +35,15 @@ namespace ace
         logging::initialize(p_spec.client_name);
 
         // Create the application's components.
+        m_asset_manager = std::make_unique<asset_manager>();
         m_event_dispatcher = std::make_unique<event_dispatcher>();
     }
 
     application_base::~application_base ()
     {
-        // Destroy the application's components in the order they were created.
+        // Destroy the application's components in the reverse order they were created.
         m_event_dispatcher.reset();
+        m_asset_manager.reset();
 
         s_instance_ptr = nullptr;
     }
@@ -51,6 +53,12 @@ namespace ace
     int application_base::start ()
     {
         return 0;
+    }
+
+    asset_manager& application_base::main_asset_manager ()
+    {
+        assert(m_asset_manager != nullptr);
+        return *m_asset_manager;
     }
 
     event_dispatcher& application_base::main_event_dispatcher ()

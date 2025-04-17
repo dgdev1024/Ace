@@ -4,6 +4,7 @@
  */
 
 #pragma once
+#include <ace.system.asset_manager.hpp>
 #include <ace.system.event_dispatcher.hpp>
 
 namespace ace
@@ -64,6 +65,13 @@ namespace ace
         virtual int start ();
 
         /**
+         * @brief Retrieves the client application's main asset manager.
+         * 
+         * @return A pointer to the client application's main asset manager.
+         */
+        asset_manager& main_asset_manager ();
+
+        /**
          * @brief Retrieves the client application's main event dispatcher.
          * 
          * @return A pointer to the client application's main event dispatcher.
@@ -82,6 +90,11 @@ namespace ace
         static application_base* s_instance_ptr;
 
         /**
+         * @brief A pointer to the client application's central asset manager.
+         */
+        std::unique_ptr<asset_manager> m_asset_manager;
+
+        /**
          * @brief A pointer to the client application's main event dispatcher.
          */
         std::unique_ptr<event_dispatcher> m_event_dispatcher;
@@ -92,5 +105,10 @@ namespace ace
         float m_fixed_timestep = 0.0f;
 
     };  
+
+    /**
+     * @brief   Aliases for `ace::application_base`.
+     */
+    using application   = application_base;
 
 }

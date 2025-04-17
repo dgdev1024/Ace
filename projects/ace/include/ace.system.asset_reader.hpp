@@ -28,6 +28,14 @@ namespace ace
         bool load_from_file (const fs::path& p_path);
 
         /**
+         * @brief   Checks to see if an asset mapped to the given name is
+         *          present in this asset file.
+         * @param   p_name      The name of the asset to check for.
+         * @return  `true` if the asset is present; `false` otherwise.
+         */
+        bool has_asset (const std::string& p_name) const;
+
+        /**
          * @brief   Un-packs an asset with the given name from the loaded asset
          *          file.
          * @param   p_name      The name of the asset to un-pack.
