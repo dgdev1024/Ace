@@ -20,7 +20,6 @@ integer values are stored in little-endian byte order.
 | `$00000014`   | 4 Bytes   | Tile Map Height, In Tile Heights                      |
 | `$00000018`   | Variable  | Tile Structure Definition, Null-Terminated            |
 | Variable      | Variable  | Tile Data                                             |
-| Variable      | Variable  | Additional Necessary Data                             |
 
 ## Tile Structure
 
@@ -36,7 +35,6 @@ The members' types are enumerated and defined as follows:
 | `0x03`        | Int               | 4 Bytes   | A 32-bit signed integer.                              |
 | `0x04`        | Unsigned Int      | 4 Bytes   | A 32-bit unsigned integer.                            |
 | `0x05`        | Boolean           | 1 Byte    | A boolean value, `true` or `false`.                   |
-| `0x06`        | Pointer           | 8 Bytes   | Pointer to some additional data in the tilemap file.  |
 | `0x11`        | 2 Floats          | 8 Bytes   | A 2D vector of Floats.                                |
 | `0x12`        | 2 Doubles         | 16 Bytes  | A 2D vector of Doubles.                               |
 | `0x13`        | 2 Ints            | 8 Bytes   | A 2D vector of Ints.                                  |
@@ -60,21 +58,3 @@ The members' types are enumerated and defined as follows:
 The tile structure's definition also defines the byte stride (size) of a single
 tile, and can be used alongside the tile map width and tile map height attributes
 in the tilemap header to determine the total size of the tilemap data.
-
-## Additional Data
-
-Just after the tilemap data section of the `.atm` tilemap file, some additional,
-optional data may be defined. This can include information on animation frames,
-collision data, triggers, etc.
-
-Each piece of additional data shall be preceeded by a byte enumerating the data
-type, as defined in the **"Tile Structure"** enumeration table above, and shall
-be formatted as follows:
-
-```
-0xTT <DATA>
-```
-
-Where `0xTT` is the type byte and `<DATA>` is the appropriate data which follows.
-The tilemap's additional data can be referenced with a special 8-byte pointer
-type (enumerated byte `0x06`).

@@ -9,6 +9,7 @@
 #include <cstring>
 #include <lz4.h>
 #include <lz4hc.h>
+#include <glm/glm.hpp>
 #include <ace.config.hpp>
 #include <ace.system.logging.hpp>
 

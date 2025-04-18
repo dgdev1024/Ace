@@ -53,6 +53,7 @@ workspace "Ace"
         -- Include Directories
         includedirs {
             "vendor/lz4",
+            "vendor/glm",
             "projects/ace/include"
         }
 
@@ -77,6 +78,7 @@ workspace "Ace"
         -- Include and Library Directories
         includedirs {
             "vendor/lz4",
+            "vendor/glm",
             "projects/ace/include",
             "projects/acepack/include"
         }
@@ -112,6 +114,7 @@ workspace "Ace"
         -- Include and Library Directories
         includedirs {
             "vendor/lz4",
+            "vendor/glm",
             "projects/ace/include",
             "projects/abox/include"
         }
