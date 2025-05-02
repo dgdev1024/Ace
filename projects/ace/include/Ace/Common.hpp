@@ -21,7 +21,7 @@
 
 #define ACE_API
 
-#define aceUnused(pVar) (void) pVar
+#define ACE_UNUSED(pVar) (void) pVar
 
 /* Typedefs ***************************************************************************************/
 

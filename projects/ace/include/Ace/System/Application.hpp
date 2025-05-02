@@ -4,7 +4,7 @@
  */
 
 #pragma once
-#include <Ace/Common.hpp>
+#include <Ace/System/Logging.hpp>
 
 namespace ace
 {
@@ -16,6 +16,12 @@ namespace ace
      */
     struct ApplicationSpecification
     {
+
+        /**
+         * @def     `ace::ApplicationSpecification::mLogging`
+         * @brief   The specification used for initializing the engine's logging system.
+         */
+        LoggingSpecification mLogging;
 
     };
 

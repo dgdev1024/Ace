@@ -11,6 +11,8 @@ namespace ace
     Unique<Application> makeApplication ()
     {
         ApplicationSpecification lSpec;
+        lSpec.mLogging.mClientName = "ACEBOX";
+        
         return makeUnique<acebox::Application>(lSpec);
     }
 
@@ -26,7 +28,7 @@ namespace acebox
     ) :
         ace::Application    { pSpec }
     {
-
+        ACE_APP_INFO("Hello From Application!");
     }
 
     Application::~Application ()

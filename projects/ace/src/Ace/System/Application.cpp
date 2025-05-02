@@ -14,7 +14,7 @@ namespace ace
         const ApplicationSpecification& pSpec
     )
     {
-        aceUnused(pSpec);
+        Logging::initialize(pSpec.mLogging);
     }
 
     Application::~Application ()

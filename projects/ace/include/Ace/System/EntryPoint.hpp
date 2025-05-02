@@ -10,8 +10,8 @@
 
 int main (int argc, char** argv)
 {
-    aceUnused(argc);
-    aceUnused(argv);
+    ACE_UNUSED(argc);
+    ACE_UNUSED(argv);
 
     auto app = ace::makeApplication();
     return app->start();

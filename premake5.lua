@@ -19,6 +19,20 @@ workspace "Ace"
     filter { "system:linux" }
         defines { "ACE_LINUX" }
     filter {}
+
+    defines { "SPDLOG_COMPILED_LIB" }
+
+    project "spdlog"
+        kind "StaticLib"
+        location "generated/spdlog"
+        targetdir "build/bin/spdlog/%{cfg.buildcfg}"
+        objdir "build/obj/spdlog/%{cfg.buildcfg}"
+        includedirs {
+            "vendor/spdlog/include"
+        }
+        files {
+            "vendor/spdlog/src/**.cpp"
+        }
     
     project "ace"
         kind "StaticLib"
@@ -28,6 +42,7 @@ workspace "Ace"
         pchheader "projects/ace/include/Ace/Precompiled.hpp"
         pchsource "projects/ace/src/Ace/Precompiled.cpp"
         includedirs {
+            "vendor/spdlog/include",
             "projects/ace/include"
         }
         files {
@@ -42,6 +57,7 @@ workspace "Ace"
         pchheader "projects/acebox/include/AceBox/Precompiled.hpp"
         pchsource "projects/acebox/src/AceBox/Precompiled.cpp"
         includedirs {
+            "vendor/spdlog/include",
             "projects/ace/include",
             "projects/acebox/include"
         }
@@ -49,8 +65,9 @@ workspace "Ace"
             "projects/acebox/src/**.cpp"
         }
         libdirs {
+            "build/bin/spdlog/%{cfg.buildcfg}",
             "build/bin/ace/%{cfg.buildcfg}"
         }
         links {
-            "ace"
+            "ace", "spdlog"
         }
