@@ -10,17 +10,27 @@
 
 #include <string>
 #include <string_view>
+#include <vector>
+#include <unordered_map>
+#include <unordered_set>
+#include <queue>
 #include <memory>
+#include <functional>
+#include <mutex>
+#include <shared_mutex>
+#include <typeindex>
+#include <filesystem>
 #include <cstdint>
 
 #if defined(ACE_USE_STDFLOAT)
     #include <stdfloat>
 #endif
 
+namespace fs = std::filesystem;
+
 /* Macros *****************************************************************************************/
 
 #define ACE_API
-
 #define ACE_UNUSED(pVar) (void) pVar
 
 /* Typedefs ***************************************************************************************/
@@ -49,15 +59,27 @@ namespace ace
         using Float64   = double;
     #endif
 
-    // Templated Types
+    // STL Types
     template <typename T>               using Unique = std::unique_ptr<T>;
     template <typename T>               using Shared = std::shared_ptr<T>;
+    template <typename T>               using List = std::vector<T>;
+    template <typename T, typename U>   using Map = std::unordered_map<T, U>;
+    template <typename T>               using Dictionary = Map<std::string, T>;
+    template <typename T>               using Queue = std::queue<T>;
+    template <typename... Ts>           using Subroutine = std::function<void(Ts...)>;
+    template <typename T>               using Function = std::function<T>;
 
     // Conformity with Ace Code Style
     using Boolean       = bool;
     using Char          = char;
     using String        = std::string;
     using StringView    = std::string_view;
+    using Index         = std::size_t;
+    using Size          = std::size_t;
+    using Count         = std::size_t;
+    using TypeIndex     = std::type_index;
+    using Mutex         = std::mutex;
+    using SharedMutex   = std::shared_mutex;
 
 }
 

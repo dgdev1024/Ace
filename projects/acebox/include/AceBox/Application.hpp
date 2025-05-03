@@ -18,6 +18,10 @@ namespace acebox
 
         virtual ~Application () override;
 
+    private:
+
+        ace::Uint32 mTheAnswer = 42;
+
     };
 
 }

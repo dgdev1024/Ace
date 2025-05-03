@@ -6,3 +6,4 @@
 #pragma once
 
 #include <Ace/System/EntryPoint.hpp>
+#include <Ace/System/EventBus.hpp>
