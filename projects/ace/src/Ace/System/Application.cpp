@@ -24,7 +24,7 @@ namespace ace
 
     /* Public Methods *****************************************************************************/
 
-    Int32 Application::start ()
+    std::int32_t Application::start ()
     {
         return 0;
     }

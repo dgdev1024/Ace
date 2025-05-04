@@ -16,8 +16,8 @@ namespace ace
 
     /* Static Members *****************************************************************************/
 
-    Shared<Logger> Logging::sEngineLogger = nullptr;
-    Shared<Logger> Logging::sClientLogger = nullptr;
+    std::shared_ptr<Logger> Logging::sEngineLogger = nullptr;
+    std::shared_ptr<Logger> Logging::sClientLogger = nullptr;
 
     /* Public Methods *****************************************************************************/
 

@@ -5,5 +5,7 @@
 
 #pragma once
 
+#include <Ace/System/AssetBundle.hpp>
 #include <Ace/System/EntryPoint.hpp>
 #include <Ace/System/EventBus.hpp>
+#include <Ace/System/Filesystem.hpp>

@@ -66,7 +66,7 @@ namespace ace
          * @return  `0` if the application loop exits without error; a non-zero value if the loop
          *          exits due to an error or exception.
          */
-        virtual Int32 start ();
+        virtual std::int32_t start ();
 
     };
 
@@ -78,6 +78,6 @@ namespace ace
      * 
      * @return  A unique pointer to the created application instance.
      */
-    Unique<Application> makeApplication ();
+    std::unique_ptr<Application> makeApplication ();
 
 }

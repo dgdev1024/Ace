@@ -16,14 +16,14 @@ namespace ace
      * @tparam  T   The type of event being dispatched.
      */
     template <typename T>
-    using EventHandler = Function<Boolean(const T&)>;
+    using EventHandler = std::function<bool(const T&)>;
 
     /**
      * @class   `ace::EventBus`
      * @brief   A static class providing a centralized interface for subscribing to, publishing and
      *          dispatching events.
      */
-    class ACE_API EventBus
+    class ACE_API EventBus final
     {
     public:
 
@@ -39,7 +39,7 @@ namespace ace
          * @return  A handler ID coresponding to the callback function.
          */
         template <typename T>
-        inline static Index subscribe (const EventHandler<T>& pCallback)
+        inline static std::size_t subscribe (const EventHandler<T>& pCallback)
         {   
             std::unique_lock lLock { getHandlersMutex<T>() };
 
@@ -62,7 +62,7 @@ namespace ace
          *          call to @a `dispatch`.
          */
         template <typename T>
-        inline static void unsubscribe (const Index pHandlerId)
+        inline static void unsubscribe (const std::size_t pHandlerId)
         {
             std::unique_lock lLock { getHandlersMutex<T>() };
 
@@ -92,7 +92,7 @@ namespace ace
             T lEvent { std::forward<As>(pArgs)... };
 
             // Get a snapshot of the appropriate handlers array. A lock is needed only for this.
-            List<EventHandler<T>> lSnapshot;
+            std::vector<EventHandler<T>> lSnapshot;
             {
                 std::shared_lock lLock { getHandlersMutex<T>() };
                 lSnapshot = getHandlers<T>();
@@ -111,7 +111,7 @@ namespace ace
         {
 
             // Get and clear the event queue under a lock. This is done via a swap.
-            List<Function<Boolean()>> lQueue;
+            std::vector<std::function<bool()>> lQueue;
             {
                 std::lock_guard lLock { getEventQueueMutex() };
                 lQueue.swap(getEventQueue());
@@ -141,7 +141,7 @@ namespace ace
          * @param   pEvent      The event being handled.
          */
         template <typename T, typename U>
-        inline static void enqueueAll (const List<U>& pSnapshot, const T& pEvent)
+        inline static void enqueueAll (const std::vector<U>& pSnapshot, const T& pEvent)
         {
 
             // Get a handle to the event queue, then lock it down.
@@ -172,9 +172,9 @@ namespace ace
          * @return  The static list of event callback functions.
          */
         template <typename T>
-        inline static List<EventHandler<T>>& getHandlers ()
+        inline static std::vector<EventHandler<T>>& getHandlers ()
         {
-            static List<EventHandler<T>> sInst;
+            static std::vector<EventHandler<T>> sInst;
             return sInst;
         }
 
@@ -184,9 +184,9 @@ namespace ace
          * 
          * @return  A handle to the event queue.
          */
-        inline static List<Function<Boolean()>>& getEventQueue ()
+        inline static std::vector<std::function<bool()>>& getEventQueue ()
         {
-            static List<Function<Boolean()>> sInst;
+            static std::vector<std::function<bool()>> sInst;
             return sInst;
         }
 
@@ -199,9 +199,9 @@ namespace ace
          * @return  A handle to the mutex.
          */
         template <typename T>
-        inline static SharedMutex& getHandlersMutex ()
+        inline static std::shared_mutex& getHandlersMutex ()
         {
-            static SharedMutex sMutex;
+            static std::shared_mutex sMutex;
             return sMutex;
         }
 
@@ -211,9 +211,9 @@ namespace ace
          * 
          * @return  A handle to the mutex.
          */
-        inline static Mutex& getEventQueueMutex ()
+        inline static std::mutex& getEventQueueMutex ()
         {
-            static Mutex sMutex;
+            static std::mutex sMutex;
             return sMutex;
         }
         
@@ -222,3 +222,13 @@ namespace ace
 }
 
 // "9 To 5" - Dolly Parton, 1980
+// "Need A Favor" - Jelly Roll, 2023
+// "Runnin' Down A Dream" (Tom Petty cover) - Luke Combs, 2024
+// "If You're Gonna Play in Texas (You Gotta Have a Fiddle in the Band)" - Alabama, 1984
+// "Beer For My Horses" - Toby Keith ft. Willie Nelson, 2002
+// "Things You Can't Live With" - Chris Janson ft. Travis Tritt, 2022
+// "Song of the South" - Alabama, 1988
+// "The Lost" - Jelly Roll, 2023
+// "It's a Long Way to the Top (If You Wanna Rock 'N' Roll)" (AC/DC cover) - Cody Jinks, 2025
+// "What's Wrong With Me" - Jelly Roll, 2024
+// "Son of a Sinner" - Jelly Roll, 2021

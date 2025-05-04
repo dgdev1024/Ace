@@ -32,13 +32,13 @@ namespace ace
          * @def     `ace::LoggingSpecification::mEngineName`
          * @brief   The string name used to identify the engine library's logger.
          */
-        String mEngineName = "ACE";
+        std::string mEngineName = "ACE";
         
         /**
          * @def     `ace::LoggingSpecification::mClientName`
          * @brief   The string name used to identify the client application's logger.
          */
-        String mClientName = "APP";
+        std::string mClientName = "APP";
 
     };
 
@@ -67,7 +67,7 @@ namespace ace
          * 
          * @return  A pointer to the logger used by the engine library.
          */
-        inline static Shared<Logger> getEngineLogger ()
+        inline static std::shared_ptr<Logger> getEngineLogger ()
         {
             return sEngineLogger;
         }
@@ -78,7 +78,7 @@ namespace ace
          * 
          * @return  A pointer to the logger used by the client application.
          */
-        inline static Shared<Logger> getClientLogger ()
+        inline static std::shared_ptr<Logger> getClientLogger ()
         {
             return sClientLogger;
         }
@@ -89,13 +89,13 @@ namespace ace
          * @def     `ace::Logging::sEngineLogger`
          * @brief   A pointer to the logger used by the engine library.
          */
-        static Shared<Logger> sEngineLogger;
+        static std::shared_ptr<Logger> sEngineLogger;
 
         /**
          * @def     `ace::Logging::sClientLogger`
          * @brief   A pointer to the logger used by the client application.
          */
-        static Shared<Logger> sClientLogger;
+        static std::shared_ptr<Logger> sClientLogger;
 
     };
 
@@ -116,9 +116,11 @@ namespace ace
     #define ACE_ENGINE_WARN(...)        ::ace::Logging::getEngineLogger()->warn(__VA_ARGS__)
     #define ACE_ENGINE_ERROR(...)       ::ace::Logging::getEngineLogger()->error(__VA_ARGS__)
     #define ACE_ENGINE_CRITICAL(...)    ::ace::Logging::getEngineLogger()->critical(__VA_ARGS__)
+    #define ACE_ENGINE_THROW(pEx, ...)  ACE_ENGINE_CRITICAL(__VA_ARGS__); throw pEx { #pEx }
 
     #define ACE_APP_INFO(...)           ::ace::Logging::getClientLogger()->info(__VA_ARGS__)
     #define ACE_APP_WARN(...)           ::ace::Logging::getClientLogger()->warn(__VA_ARGS__)
     #define ACE_APP_ERROR(...)          ::ace::Logging::getClientLogger()->error(__VA_ARGS__)
     #define ACE_APP_CRITICAL(...)       ::ace::Logging::getClientLogger()->critical(__VA_ARGS__)
+    #define ACE_APP_THROW(pEx, ...)     ACE_APP_CRITICAL(__VA_ARGS__); throw pEx { #pEx }
 #endif

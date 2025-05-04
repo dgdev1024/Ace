@@ -20,7 +20,7 @@ namespace acebox
 
     private:
 
-        ace::Uint32 mTheAnswer = 42;
+        std::uint32_t mTheAnswer = 42;
 
     };
 

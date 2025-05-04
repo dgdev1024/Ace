@@ -33,6 +33,20 @@ workspace "Ace"
         files {
             "vendor/spdlog/src/**.cpp"
         }
+
+    project "lz4"
+        kind "StaticLib"
+        language "C"
+        cdialect "C17"
+        location "generated/lz4"
+        targetdir "build/bin/lz4/%{cfg.buildcfg}"
+        objdir "build/obj/lz4/%{cfg.buildcfg}"
+        includedirs {
+            "vendor/lz4/lib"
+        }
+        files {
+            "vendor/lz4/lib/*.c"
+        }
     
     project "ace"
         kind "StaticLib"
@@ -43,6 +57,7 @@ workspace "Ace"
         pchsource "projects/ace/src/Ace/Precompiled.cpp"
         includedirs {
             "vendor/spdlog/include",
+            "vendor/lz4/lib",
             "projects/ace/include"
         }
         files {
@@ -58,6 +73,7 @@ workspace "Ace"
         pchsource "projects/acebox/src/AceBox/Precompiled.cpp"
         includedirs {
             "vendor/spdlog/include",
+            "vendor/lz4/lib",
             "projects/ace/include",
             "projects/acebox/include"
         }
@@ -69,5 +85,5 @@ workspace "Ace"
             "build/bin/ace/%{cfg.buildcfg}"
         }
         links {
-            "ace", "spdlog"
+            "ace", "spdlog", "lz4"
         }

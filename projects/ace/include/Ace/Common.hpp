@@ -8,6 +8,7 @@
 
 /* Include Files **********************************************************************************/
 
+#include <fstream>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -20,66 +21,44 @@
 #include <shared_mutex>
 #include <typeindex>
 #include <filesystem>
+#include <stdfloat>
+#include <bit>
 #include <cstdint>
 
-#if defined(ACE_USE_STDFLOAT)
-    #include <stdfloat>
-#endif
-
 namespace fs = std::filesystem;
+
+static_assert(std::endian::native == std::endian::little,
+    "The Ace Engine requires a little-endian host machine.");
+static_assert(sizeof(std::size_t) == sizeof(std::uint64_t),
+    "The Ace Engine requires `std::size_t` to be the same length as `std::uint64_t`.");
 
 /* Macros *****************************************************************************************/
 
 #define ACE_API
 #define ACE_UNUSED(pVar) (void) pVar
 
-/* Typedefs ***************************************************************************************/
+/* Constants **************************************************************************************/
 
 namespace ace
 {
 
-    // Signed Integers
-    using Int8          = std::int8_t;
-    using Int16         = std::int16_t;
-    using Int32         = std::int32_t;
-    using Int64         = std::int64_t;
+    /**
+     * @def     `ace::ENGINE_MAJOR_VERSION`
+     * @brief   The major version of the Ace Engine Library.
+     */
+    constexpr std::uint8_t  ENGINE_MAJOR_VERSION    = 0x00;
 
-    // Unsigned Integers
-    using Uint8         = std::uint8_t;
-    using Uint16        = std::uint16_t;
-    using Uint32        = std::uint32_t;
-    using Uint64        = std::uint64_t;
+    /**
+     * @def     `ace::ENGINE_MINOR_VERSION`
+     * @brief   The minor version of the Ace Engine Library.
+     */
+    constexpr std::uint8_t  ENGINE_MINOR_VERSION    = 0x00;
 
-    // Floating-Point Nubmers
-    #if defined(ACE_USE_STDFLOAT)
-        using Float32   = std::float32_t;
-        using Float64   = std::float64_t;
-    #else
-        using Float32   = float;
-        using Float64   = double;
-    #endif
-
-    // STL Types
-    template <typename T>               using Unique = std::unique_ptr<T>;
-    template <typename T>               using Shared = std::shared_ptr<T>;
-    template <typename T>               using List = std::vector<T>;
-    template <typename T, typename U>   using Map = std::unordered_map<T, U>;
-    template <typename T>               using Dictionary = Map<std::string, T>;
-    template <typename T>               using Queue = std::queue<T>;
-    template <typename... Ts>           using Subroutine = std::function<void(Ts...)>;
-    template <typename T>               using Function = std::function<T>;
-
-    // Conformity with Ace Code Style
-    using Boolean       = bool;
-    using Char          = char;
-    using String        = std::string;
-    using StringView    = std::string_view;
-    using Index         = std::size_t;
-    using Size          = std::size_t;
-    using Count         = std::size_t;
-    using TypeIndex     = std::type_index;
-    using Mutex         = std::mutex;
-    using SharedMutex   = std::shared_mutex;
+    /**
+     * @def     `ace::ENGINE_REVISION_NUMBER`
+     * @brief   The revision number of the Ace Engine Library.
+     */
+    constexpr std::uint16_t ENGINE_REVISION_NUMBER  = 0x0000;
 
 }
 
@@ -98,7 +77,7 @@ namespace ace
      * @param   pArgs   The arguments, if any, passed into the object's constructor.
      */
     template <typename T, typename... As>
-    inline Unique<T> makeUnique (
+    inline std::unique_ptr<T> makeUnique (
         As&&... pArgs
     )
     {
@@ -116,7 +95,7 @@ namespace ace
      * @param   pArgs   The arguments, if any, passed into the object's constructor.
      */
     template <typename T, typename... As>
-    inline Shared<T> makeShared (
+    inline std::shared_ptr<T> makeShared (
         As&&... pArgs
     )
     {
