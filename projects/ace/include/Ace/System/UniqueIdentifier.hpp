@@ -31,6 +31,21 @@ namespace ace
         T mHigh = 0, mLow = 0;
 
         /**
+         * @fn      `ace::UniqueIdentifier::toString`
+         * @brief   Generates a string representation of this @a `UniqueIdentifier`.
+         * 
+         * @return  A string representation of this @a `UniqueIdentifier`
+         */
+        inline std::string toString () const
+        {
+            std::ostringstream pStream;
+            pStream << std::hex << std::setw(16) << std::setfill('0') << mHigh
+                                << std::setw(16) << std::setfill('0') << m_low;
+
+            return pStream.str();
+        }
+
+        /**
          * @def     `ace::UniqueIdentifier::operator==`
          * @brief   Check to see if two @a `UniqueIdentifiers` of the same type are equal.
          * 

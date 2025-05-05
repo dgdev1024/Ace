@@ -42,7 +42,7 @@ namespace ace
          * 
          * @return  A byte buffer with the loaded asset's contents if successful.
          */
-        static std::vector<std::uint8_t> readAsset (const fs::path& pPath);
+        static std::vector<std::uint8_t> readAsset (const std::string& pPath);
 
     private:
 

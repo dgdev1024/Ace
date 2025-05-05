@@ -28,7 +28,7 @@ namespace ace
         sAssetBundles.emplace_back(pPath);
     }
 
-    std::vector<std::uint8_t> Filesystem::readAsset (const fs::path& pPath)
+    std::vector<std::uint8_t> Filesystem::readAsset (const std::string& pPath)
     {
         std::shared_lock lLock { sMutex };
 
@@ -46,14 +46,14 @@ namespace ace
         // Iteate over the mounted asset bundle files and look for the asset in there.
         for (auto& lAssetBundle : sAssetBundles)
         {
-            if (auto lAssetData = lAssetBundle.read(pPath.string()))
+            if (auto lAssetData = lAssetBundle.read(pPath))
             {
                 return *lAssetData;
             }
         }
 
         // Throw if the asset could not be found.
-        ACE_ENGINE_THROW(std::out_of_range, "Asset '{}' could not be found!", pPath.string());
+        ACE_ENGINE_THROW(std::out_of_range, "Asset '{}' could not be found!", pPath);
     }
 
     /* Private Methods ****************************************************************************/
