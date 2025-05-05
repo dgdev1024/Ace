@@ -4,7 +4,7 @@
  */
 
 #pragma once
-#include <Ace/Common.hpp>
+#include <Ace/System/AssetBundle.hpp>
 
 namespace ace
 {
@@ -25,6 +25,14 @@ namespace ace
          * @param   pPath   The path to the folder to check in.
          */
         static void mountLooseFolder (const fs::path& pPath);
+
+        /**
+         * @fn      `ace::Filesystem::mountAssetBundle`
+         * @brief   Registers an asset bundle file for the @a `Filesystem` to search in.
+         * 
+         * @param   pPath   The path to the asset bundle file to register.
+         */
+        static void mountAssetBundle (const fs::path& pPath);
 
         /**
          * @fn      `ace::Filesystem::readAsset`
@@ -62,6 +70,12 @@ namespace ace
          * @brief   A container of mounted loose folders.
          */
         static std::vector<fs::path> sLooseFolders;
+
+        /**
+         * @def     `ace::Filesystem::sBundles`
+         * @brief   A container of mounted asset bundle files.
+         */
+        static std::vector<AssetBundle> sAssetBundles;
 
     };
 

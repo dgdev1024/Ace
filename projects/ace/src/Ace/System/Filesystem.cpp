@@ -12,6 +12,7 @@ namespace ace
 
     std::shared_mutex           Filesystem::sMutex;
     std::vector<fs::path>       Filesystem::sLooseFolders;
+    std::vector<AssetBundle>    Filesystem::sAssetBundles;
 
     /* Public Methods *****************************************************************************/
 
@@ -21,11 +22,17 @@ namespace ace
         sLooseFolders.push_back(pPath);
     }
 
+    void Filesystem::mountAssetBundle (const fs::path& pPath)
+    {
+        std::lock_guard lLock { sMutex };
+        sAssetBundles.emplace_back(pPath);
+    }
+
     std::vector<std::uint8_t> Filesystem::readAsset (const fs::path& pPath)
     {
         std::shared_lock lLock { sMutex };
 
-        // Iterate over the mounted loose folders and look for asset in there, first.
+        // Iterate over the mounted loose folders and look for the asset in there, first.
         // The specified `pPath` should be relative to one of these folders.
         for (const fs::path& lLooseFolder : sLooseFolders)
         {
@@ -33,6 +40,15 @@ namespace ace
             if (fs::exists(lFullPath) == true)
             {
                 return readLooseFile(lFullPath);
+            }
+        }
+
+        // Iteate over the mounted asset bundle files and look for the asset in there.
+        for (auto& lAssetBundle : sAssetBundles)
+        {
+            if (auto lAssetData = lAssetBundle.read(pPath.string()))
+            {
+                return *lAssetData;
             }
         }
 

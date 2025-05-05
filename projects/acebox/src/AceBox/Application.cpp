@@ -28,26 +28,12 @@ namespace acebox
     ) :
         ace::Application    { pSpec }
     {
-        ace::Filesystem::mountLooseFolder("./notes");
-        // auto lLogoBlue = ace::Filesystem::readAsset("./logo-blue.png");
-        // auto lPackageHpp = ace::Filesystem::readAsset("./cgpt.package.hpp");
-        // auto lLogoGreen = ace::Filesystem::readAsset("./logo-green.png");
-        // auto lLogoRed = ace::Filesystem::readAsset("./logo-red.png");
-
-        // ace::AssetBundle::write(
-        //     "./notes/package.ace",
-        //     {
-        //         { "./logos/blue.png",       lLogoBlue },
-        //         { "./code/package.hpp",     lPackageHpp },
-        //         { "./logos/green.png",      lLogoGreen },
-        //         { "./logos/red.png",        lLogoRed }
-        //     }
-        // );
+        
     }
 
     Application::~Application ()
     {
-        ace::EventBus::dispatch();
+        
     }
 
 }

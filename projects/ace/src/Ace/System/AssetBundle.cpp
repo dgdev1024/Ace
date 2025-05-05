@@ -150,6 +150,7 @@ namespace ace
             {
                 ACE_ENGINE_ERROR("Cannot read asset data: error decompressing asset '{}'.",
                     pVirtualPath);
+                ACE_ENGINE_TRACE("Expected: {}, Got: {}", lRawSize, lDecompressedSize);
                 return std::nullopt;
             }
 
@@ -221,7 +222,7 @@ namespace ace
         // Calculate the size of the asset bundle header, and the index entry table, so that we can
         // assign offsets to each fo the asset datas.
         std::uint32_t   lEntryCount     = static_cast<std::uint32_t>(lPackContexts.size());
-        std::size_t     lHeaderSize     = 8;        // The asset bundle header is 8 bytes long.
+        std::size_t     lHeaderSize     = 12;       // The asset bundle header is 12 bytes long.
         for (const auto& lPackContext : lPackContexts)
         {
             lHeaderSize +=
@@ -294,12 +295,12 @@ namespace ace
         // - (+0x05, 1 Byte):   Engine Minor Version    (must <= engine minor version)
         // - (+0x06, 2 Bytes):  Engine Revision Number  (should <= engine revision number, but not required)
         // - (+0x08, 4 Bytes):  Asset Count
-        // -                    Total = 8 Bytes
+        // -                    Total = 12 Bytes
 
         // Get the file's size. Make sure it's at least big enough to hold the header.
         auto lFileSize = mFileStream.tellg();
         mFileStream.seekg(0, mFileStream.beg);
-        if (lFileSize < 8)
+        if (lFileSize < 12)
         {
             ACE_ENGINE_ERROR("Asset bundle file size is too small to hold the header.");
             return false;
