@@ -40,7 +40,7 @@ namespace ace
         {
             std::ostringstream pStream;
             pStream << std::hex << std::setw(16) << std::setfill('0') << mHigh
-                                << std::setw(16) << std::setfill('0') << m_low;
+                                << std::setw(16) << std::setfill('0') << mLow;
 
             return pStream.str();
         }
