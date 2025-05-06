@@ -3,6 +3,7 @@
  */
 
 #include <iostream>
+#include <JS/Token.hpp>
 #include <AceBox/Precompiled.hpp>
 #include <AceBox/Application.hpp>
 
@@ -40,12 +41,8 @@ namespace acebox
     ) :
         ace::Application    { pSpec }
     {
-        constexpr ace::UniqueID TEXT_ASSET { 0x1234, 0x5678 };
-
-        ace::Filesystem::mountAssetBundle("./notes/package.ace");
-        auto lText = ace::AssetManager::loadAsset<TextAsset>(TEXT_ASSET, "code/package.hpp");
-
-        std::cout << lText.to<TextAsset>()->mContents << std::endl;
+        js::Token lToken { js::TokenType::NumericLiteral, "3.14159", 1, 1 };
+        ACE_APP_INFO("Token is {}.", lToken.getLiteralAs<js::NumberType>());
     }
 
     Application::~Application ()

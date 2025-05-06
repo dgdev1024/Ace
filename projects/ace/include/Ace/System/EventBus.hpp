@@ -233,3 +233,5 @@ namespace ace
 // "What's Wrong With Me" - Jelly Roll, 2024
 // "Son of a Sinner" - Jelly Roll, 2021
 // "Piano Man" - Billy Joel, 1973
+// "Chattahoochee" - Alan Jackson, 1992
+// "The Devil Went Down to Georgia" - Charlie Daniels Band, 1979

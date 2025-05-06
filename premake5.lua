@@ -47,6 +47,16 @@ workspace "Ace"
         files {
             "vendor/lz4/lib/*.c"
         }
+
+    project "ace-js"
+        kind "StaticLib"
+        location "generated/ace-js"
+        targetdir "build/bin/ace-js/%{cfg.buildcfg}"
+        objdir "build/obj/ace-js/%{cfg.buildcfg}"
+        pchheader "projects/ace-js/include/JS/Precompiled.hpp"
+        pchsource "projects/ace-js/src/JS/Precompiled.cpp"
+        includedirs { "projects/ace-js/include" }
+        files {"projects/ace-js/src/**.cpp" }
     
     project "ace"
         kind "StaticLib"
@@ -58,6 +68,7 @@ workspace "Ace"
         includedirs {
             "vendor/spdlog/include",
             "vendor/lz4/lib",
+            "projects/ace-js/include",
             "projects/ace/include"
         }
         files {
@@ -74,6 +85,7 @@ workspace "Ace"
         includedirs {
             "vendor/spdlog/include",
             "vendor/lz4/lib",
+            "projects/ace-js/include",
             "projects/ace/include",
             "projects/acebox/include"
         }
@@ -85,5 +97,5 @@ workspace "Ace"
             "build/bin/ace/%{cfg.buildcfg}"
         }
         links {
-            "ace", "spdlog", "lz4"
+            "ace", "ace-js", "spdlog", "lz4"
         }
