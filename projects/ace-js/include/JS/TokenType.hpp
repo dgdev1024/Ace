@@ -18,32 +18,82 @@ namespace js
         Unknown = 0,
 
         // Keywords
-        Var,
-        Let,
+        Abstract,
+        Arguments,
+        Async,
+        Await,
+        Break,
+        Case,
+        Catch,
+        Class,
         Const,
-        If,
+        Continue,
+        Default,
+        Delete,
+        Do,
         Else,
+        Enum,
+        Export,
+        Extends,
+        Final,
+        Finally,
         For,
-        While,
         Function,
+        Goto,
+        If,
+        Implements,
+        Import,
+        In,
+        InstanceOf,
+        Interface,
+        Let,
+        Native,
+        New,
+        Package,
+        Private,
+        Protected,
+        Public,
         Return,
-        Require,
+        Static,
+        Super,
+        Switch,
+        Synchonized,
+        This,
+        Throw,
+        Throws,
+        Transient,
+        Try,
+        TypeOf,
         Undefined,
+        Var,
+        Volatile,
+        While,
+        With,
+        Yield,
 
         // Literals
         Identifier,
         StringLiteral,
+        TemplateLiteral,
         NumericLiteral,
+        BinaryLiteral,
+        OctalLiteral,
+        HexadecimalLiteral,
         BooleanLiteral,
         NullLiteral,
 
         // Arithmetic Operators
         Plus,
         Minus,
+        Hyphen = Minus,
+        Dash = Minus,
         Times,
+        Asterisk = Times,
         Exponent,
         Divide,
+        Slash = Divide,
         Modulo,
+        Percent = Modulo,
         Increment,
         Decrement,
 
@@ -97,9 +147,11 @@ namespace js
         // Punctuators
         Period,
         Dot = Period,
+        Question,
         Comma,
         Semicolon,
         Colon,
+        Arrow,
 
         // End Of File
         EndOfFile
@@ -149,21 +201,20 @@ namespace js
         static constexpr bool Value = false; 
     };
 
-    template <> struct IsLiteralToken<TokenType::Identifier>        { using Type = std::string; static constexpr bool Value = true; };
-    template <> struct IsLiteralToken<TokenType::StringLiteral>     { using Type = std::string; static constexpr bool Value = true; }; 
-    template <> struct IsLiteralToken<TokenType::NumericLiteral>    { using Type = double; static constexpr bool Value = true; }; 
-    template <> struct IsLiteralToken<TokenType::BooleanLiteral>    { using Type = bool; static constexpr bool Value = true; }; 
-    template <> struct IsLiteralToken<TokenType::NullLiteral>       { using Type = std::nullptr_t; static constexpr bool Value = true; }; 
+    template <> struct IsLiteralToken<TokenType::Identifier>            { using Type = StringType; static constexpr bool Value = true; };
+    template <> struct IsLiteralToken<TokenType::StringLiteral>         { using Type = StringType; static constexpr bool Value = true; }; 
+    template <> struct IsLiteralToken<TokenType::TemplateLiteral>       { using Type = StringType; static constexpr bool Value = true; }; 
+    template <> struct IsLiteralToken<TokenType::NumericLiteral>        { using Type = NumberType; static constexpr bool Value = true; }; 
+    template <> struct IsLiteralToken<TokenType::BinaryLiteral>         { using Type = NumberType; static constexpr bool Value = true; }; 
+    template <> struct IsLiteralToken<TokenType::OctalLiteral>          { using Type = NumberType; static constexpr bool Value = true; }; 
+    template <> struct IsLiteralToken<TokenType::HexadecimalLiteral>    { using Type = NumberType; static constexpr bool Value = true; }; 
+    template <> struct IsLiteralToken<TokenType::BooleanLiteral>        { using Type = BooleanType; static constexpr bool Value = true; }; 
+    template <> struct IsLiteralToken<TokenType::NullLiteral>           { using Type = NullType; static constexpr bool Value = true; }; 
 
     /**
      * @typedef `js::Literal`
      * @brief   Defines a variant type which can hold any literal-eligible type.
      */
-    using Literal = std::variant<
-        typename IsLiteralToken<TokenType::StringLiteral>::Type,
-        typename IsLiteralToken<TokenType::NumericLiteral>::Type,
-        typename IsLiteralToken<TokenType::BooleanLiteral>::Type,
-        typename IsLiteralToken<TokenType::NullLiteral>::Type
-    >;
+    using Literal = std::variant<StringType, NumberType, BooleanType, NullType>;
 
 }

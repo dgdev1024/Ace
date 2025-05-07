@@ -12,26 +12,37 @@ namespace js
 
     Token::Token (
         const TokenType pType, 
-        const std::string& pLexeme,
+        std::string_view pLexeme,
         std::size_t pLine,
         std::size_t pColumn
     ) :
         mType       { pType },
-        mLexeme     { pLexeme },
         mLine       { pLine },
         mColumn     { pColumn }
     {
+        mLexeme.append(pLexeme.begin(), pLexeme.end());
+
         switch (pType)
         {
             case TokenType::Identifier:
             case TokenType::StringLiteral:
-                mLiteral.emplace(std::in_place_type<StringType>, pLexeme);
+            case TokenType::TemplateLiteral:
+                mLiteral.emplace(std::in_place_type<StringType>, mLexeme);
                 break;
             case TokenType::NumericLiteral:
-                mLiteral.emplace(std::in_place_type<NumberType>, std::stod(pLexeme));
+                mLiteral.emplace(std::in_place_type<NumberType>, std::stod(mLexeme));
+                break;
+            case TokenType::BinaryLiteral:
+                mLiteral.emplace(std::in_place_type<NumberType>, std::stoul(mLexeme, nullptr, 2));
+                break;
+            case TokenType::OctalLiteral:
+                mLiteral.emplace(std::in_place_type<NumberType>, std::stoul(mLexeme, nullptr, 8));
+                break;
+            case TokenType::HexadecimalLiteral:
+                mLiteral.emplace(std::in_place_type<NumberType>, std::stoul(mLexeme, nullptr, 16));
                 break;
             case TokenType::BooleanLiteral:
-                mLiteral.emplace(std::in_place_type<BooleanType>, (pLexeme == "true"));
+                mLiteral.emplace(std::in_place_type<BooleanType>, (mLexeme == "true"));
                 break;
             case TokenType::NullLiteral:
                 mLiteral.emplace(std::in_place_type<NullType>, nullptr);

@@ -3,7 +3,7 @@
  */
 
 #include <iostream>
-#include <JS/Token.hpp>
+#include <JS/Lexer.hpp>
 #include <AceBox/Precompiled.hpp>
 #include <AceBox/Application.hpp>
 
@@ -23,17 +23,6 @@ namespace ace
 namespace acebox
 {
 
-    struct TextAsset
-    {
-        std::string mContents = "";
-
-        inline bool deserialize (std::span<std::uint8_t> pData)
-        {
-            mContents.assign(pData.begin(), pData.end());
-            return true;
-        }
-    };
-
     /* Constructors and Destructor ****************************************************************/
 
     Application::Application (
@@ -41,8 +30,14 @@ namespace acebox
     ) :
         ace::Application    { pSpec }
     {
-        js::Token lToken { js::TokenType::NumericLiteral, "3.14159", 1, 1 };
-        ACE_APP_INFO("Token is {}.", lToken.getLiteralAs<js::NumberType>());
+        js::Lexer lLexer;
+        if (lLexer.tokenizeFile("./notes/grab-bag-1.js") == true)
+        {
+            for (const auto& lToken : lLexer.getTokens())
+            {
+                ACE_APP_INFO("{}", lToken.toString());
+            }
+        }
     }
 
     Application::~Application ()

@@ -28,7 +28,7 @@ namespace js
          */
         explicit Token (
             const TokenType pType, 
-            const std::string& pLexeme,
+            std::string_view pLexeme,
             std::size_t pLine   = 0, 
             std::size_t pColumn = 0
         );
