@@ -83,7 +83,18 @@ namespace js
             std::cerr << "Lex Error: No source file path specified." << std::endl;
             return false;
         }
-        else if (fs::exists(pPath) == false || fs::is_regular_file(pPath) == false)
+        
+        auto lAbsolute = fs::absolute(pPath).lexically_normal();
+        if (mSourcePaths.contains(lAbsolute))
+        {
+            return true;
+        }
+        else
+        {
+            mSourcePaths.emplace(lAbsolute);
+        }
+        
+        if (fs::exists(pPath) == false || fs::is_regular_file(pPath) == false)
         {
             std::cerr   << std::format("Lex Error: Source file '{}' not found.", pPath.string())
                         << std::endl;
@@ -168,8 +179,15 @@ namespace js
     {
         char lChar = (*mCurrentSource)[mCurrent++];
 
-        if (lChar == '\n')  { mLine++; mColumn = 1; }
-        else                { mColumn++; }
+        if (lChar == '\n')  
+        { 
+            mLine++; 
+            mColumn = 1; 
+        }
+        else                
+        { 
+            mColumn++; 
+        }
 
         return lChar;
     }
@@ -249,72 +267,214 @@ namespace js
         {
             // Arithmetic Operators
             case '+':
-                if (match('+'))         { addToken(TokenType::Increment); }
-                else if (match('='))    { addToken(TokenType::AssignPlus); }
-                else                    { addToken(TokenType::Plus); }
+                if (match('+'))         
+                { 
+                    addToken(TokenType::Increment); 
+                }
+                else if (match('='))    
+                { 
+                    addToken(TokenType::AssignPlus); 
+                }
+                else                    
+                { 
+                    addToken(TokenType::Plus); 
+                }
                 break;
             case '-':
-                if (match('-'))         { addToken(TokenType::Decrement); }
-                else if (match('='))    { addToken(TokenType::AssignMinus); }
-                else                    { addToken(TokenType::Minus); }
+                if (match('-'))         
+                { 
+                    addToken(TokenType::Decrement); 
+                }
+                else if (match('='))    
+                { 
+                    addToken(TokenType::AssignMinus); 
+                }
+                else                    
+                { 
+                    addToken(TokenType::Minus); 
+                }
                 break;
             case '*':
-                if (match('*'))         { addToken(match('=') ? TokenType::AssignExponent : TokenType::Exponent); }
-                else if (match('='))    { addToken(TokenType::AssignTimes); }
-                else                    { addToken(TokenType::Times); }
+                if (match('*'))         
+                { 
+                    addToken(
+                        match('=') 
+                            ? TokenType::AssignExponent 
+                            : TokenType::Exponent
+                    ); 
+                }
+                else if (match('='))    
+                { 
+                    addToken(TokenType::AssignTimes); 
+                }
+                else                    
+                { 
+                    addToken(TokenType::Times); 
+                }
                 break;
             case '/':
-                if (match('/'))         { skipLineComment(); }
-                else if (match('*'))    { skipBlockComment(); }
-                else if (match('='))    { addToken(TokenType::AssignDivide); }
-                else                    { addToken(TokenType::Divide); }
+                if (match('/'))         
+                { 
+                    skipLineComment(); 
+                }
+                else if (match('*'))    
+                { 
+                    skipBlockComment(); 
+                }
+                else if (match('='))    
+                { 
+                    addToken(TokenType::AssignDivide); 
+                }
+                else                    
+                { 
+                    addToken(TokenType::Divide); 
+                }
                 break;
             case '%':
-                if (match('='))         { addToken(TokenType::AssignModulo); }
-                else                    { addToken(TokenType::Modulo); }
+                if (match('='))         
+                { 
+                    addToken(TokenType::AssignModulo); 
+                }
+                else                    
+                { 
+                    addToken(TokenType::Modulo); 
+                }
                 break;
             case '<':
-                if (match('<'))         { addToken(match('=') ? TokenType::AssignBitwiseShiftLeft : TokenType::BitwiseShiftLeft); }
-                else if (match('='))    { addToken(TokenType::CompareLessEqual); }
-                else                    { addToken(TokenType::CompareLess); }
+                if (match('<'))         
+                { 
+                    addToken(
+                        match('=') 
+                            ? TokenType::AssignBitwiseShiftLeft 
+                            : TokenType::BitwiseShiftLeft
+                    ); 
+                }
+                else if (match('='))    
+                { 
+                    addToken(TokenType::CompareLessEqual); 
+                }
+                else                    
+                { 
+                    addToken(TokenType::CompareLess); 
+                }
                 break;
             case '>':
                 if (match('>'))
+                
                 {
-                    if (match('>'))     { addToken(match('=') ? TokenType::AssignBitwiseShiftRightUnsigned : TokenType::BitwiseShiftRightUnsigned); }
-                    else                { addToken(match('=') ? TokenType::AssignBitwiseShiftRight : TokenType::BitwiseShiftRight); }
+
+                    if (match('>'))    
+
+                    { 
+                        addToken(
+                            match('=') 
+                                ? TokenType::AssignBitwiseShiftRightUnsigned 
+                                : TokenType::BitwiseShiftRightUnsigned
+                        ); 
+                    }
+                    else                
+                    { 
+                        addToken(
+                            match('=') 
+                                ? TokenType::AssignBitwiseShiftRight 
+                                : TokenType::BitwiseShiftRight
+                        ); 
+                    }
                 }
-                else if (match('='))    { addToken(TokenType::CompareGreaterEqual); }
-                else                    { addToken(TokenType::CompareGreater); }
+                else if (match('='))    
+                { 
+                    addToken(TokenType::CompareGreaterEqual); 
+                }
+                else                    
+                { 
+                    addToken(TokenType::CompareGreater); 
+                }
                 break;
             case '&':
-                if (match('&'))         { addToken(TokenType::LogicalAnd); }
-                else if (match('='))    { addToken(TokenType::AssignBitwiseAnd); }
-                else                    { addToken(TokenType::BitwiseAnd); }
+                if (match('&'))         
+                { 
+                    addToken(TokenType::LogicalAnd); 
+                }
+                else if (match('='))    
+                { 
+                    addToken(TokenType::AssignBitwiseAnd); 
+                }
+                else                    
+                { 
+                    addToken(TokenType::BitwiseAnd); 
+                }
                 break;
             case '|':
-                if (match('|'))         { addToken(TokenType::LogicalOr); }
-                else if (match('='))    { addToken(TokenType::AssignBitwiseOr); }
-                else                    { addToken(TokenType::BitwiseOr); }
+                if (match('|'))         
+                { 
+                    addToken(TokenType::LogicalOr); 
+                }
+                else if (match('='))    
+                { 
+                    addToken(TokenType::AssignBitwiseOr); 
+                }
+                else                    
+                { 
+                    addToken(TokenType::BitwiseOr); 
+                }
                 break;
             case '^':
-                if (match('='))         { addToken(TokenType::AssignBitwiseXor); }
-                else                    { addToken(TokenType::BitwiseXor); }
+                if (match('='))         
+                { 
+                    addToken(TokenType::AssignBitwiseXor); 
+                }
+                else                    
+                { 
+                    addToken(TokenType::BitwiseXor); 
+                }
                 break;
-            case '~':                   addToken(TokenType::BitwiseNot); break;
+            case '~':                   
+                addToken(TokenType::BitwiseNot); break;
             case '!':
-                if (match('='))         { addToken(match('=') ? TokenType::CompareStrictNotEqual : TokenType::CompareNotEqual); }
-                else                    { addToken(TokenType::LogicalNot); }
+                if (match('='))         
+                { 
+                    addToken(
+                        match('=') 
+                            ? TokenType::CompareStrictNotEqual 
+                            : TokenType::CompareNotEqual
+                    ); 
+                }
+                else                    
+                { 
+                    addToken(TokenType::LogicalNot); 
+                }
                 break;
             case '=':
-                if (match('='))         { addToken(match('=') ? TokenType::CompareStrictEqual : TokenType::CompareEqual); }
-                else if (match('>'))    { addToken(TokenType::Arrow); }
-                else                    { addToken(TokenType::AssignEqual); }
+                if (match('='))         
+                { 
+                    addToken(
+                        match('=') 
+                            ? TokenType::CompareStrictEqual 
+                            : TokenType::CompareEqual
+                    ); 
+                }
+                else if (match('>'))    
+                { 
+                    addToken(TokenType::Arrow); 
+                }
+                else                    
+                { 
+                    addToken(TokenType::AssignEqual); 
+                }
                 break;
             case '?':
-                if (match('.'))         { addToken(TokenType::Chain); }
-                else if (match('?'))    { addToken(TokenType::Coalesce); }
-                else                    { addToken(TokenType::Question); }
+                if (match('.'))         
+                { 
+                    addToken(TokenType::Chain); 
+                }
+                else if (match('?'))    
+                { 
+                    addToken(TokenType::Coalesce); 
+                }
+                else                    
+                { 
+                    addToken(TokenType::Question); 
+                }
                 break;
             case '.':
                 if (match('.'))
@@ -330,26 +490,63 @@ namespace js
 
                 addToken(TokenType::Period);
                 break;
-            case '(':                   addToken(TokenType::OpenParen); break;
-            case ')':                   addToken(TokenType::CloseParen); break;
-            case '[':                   addToken(TokenType::OpenBracket); break;
-            case ']':                   addToken(TokenType::CloseBracket); break;
-            case '{':                   addToken(TokenType::OpenBrace); break;
-            case '}':                   addToken(TokenType::CloseBrace); break;
-            case ',':                   addToken(TokenType::Comma); break;
-            case ';':                   addToken(TokenType::Semicolon); break;
-            case ':':                   addToken(TokenType::Colon); break;
+            case '(':                   
+                addToken(TokenType::OpenParen); 
+                break;
+            case ')':                   
+                addToken(TokenType::CloseParen); 
+                break;
+            case '[':                   
+                addToken(TokenType::OpenBracket); 
+                break;
+            case ']':                   
+                addToken(TokenType::CloseBracket); 
+                break;
+            case '{':                   
+                addToken(TokenType::OpenBrace); 
+                break;
+            case '}':                   
+                addToken(TokenType::CloseBrace); 
+                break;
+            case ',':                   
+                addToken(TokenType::Comma); 
+                break;
+            case ';':                   
+                addToken(TokenType::Semicolon); 
+                break;
+            case ':':                   
+                addToken(TokenType::Colon); 
+                break;
             case '"':
             case '\'':
-            case '`':                   return scanStringLiteral(lChar);
+            case '`':                   
+                return scanStringLiteral(lChar);
             default:
             {
-                if      (std::isspace(lChar))                   { return true; }
-                else if (lChar == '0' && match('x'))            { return scanHexadecimalLiteral(); }
-                else if (lChar == '0' && match('o'))            { return scanOctalLiteral(); }
-                else if (lChar == '0' && match('b'))            { return scanBinaryLiteral(); }
-                else if (std::isdigit(lChar))                   { return scanNumericLiteral(); }
-                else if (lChar == '_' || std::isalpha(lChar))   { return scanIdentifier(); }
+                if (std::isspace(lChar))                   
+                {   
+                    return true; 
+                }
+                else if (lChar == '0' && match('x'))            
+                {   
+                    return scanHexadecimalLiteral(); 
+                }
+                else if (lChar == '0' && match('o'))            
+                {   
+                    return scanOctalLiteral(); 
+                }
+                else if (lChar == '0' && match('b'))            
+                {   
+                    return scanBinaryLiteral(); 
+                }
+                else if (std::isdigit(lChar))                   
+                {   
+                    return scanNumericLiteral(); 
+                }
+                else if (lChar == '_' || std::isalpha(lChar))   
+                {   
+                    return scanIdentifier(); 
+                }
                 else
                 {
                     std::cerr   << std::format("Lex Error: Unexpected character '{}'.", lChar) 

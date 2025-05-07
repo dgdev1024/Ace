@@ -226,6 +226,12 @@ namespace js
     private:
 
         /**
+         * @def     `js::Lexer::mSourcePaths`
+         * @brief   Contains the paths to all of the sources which have been lexed.
+         */
+        std::unordered_set<fs::path> mSourcePaths;
+
+        /**
          * @def     `js::Lexer::mSources`
          * @brief   Contains all of the source code strings which have and are being lexed.
          */
