@@ -17,11 +17,10 @@ namespace js
         std::size_t pColumn
     ) :
         mType       { pType },
+        mLexeme     { pLexeme },
         mLine       { pLine },
         mColumn     { pColumn }
     {
-        mLexeme.append(pLexeme.begin(), pLexeme.end());
-
         switch (pType)
         {
             case TokenType::Identifier:
@@ -30,16 +29,16 @@ namespace js
                 mLiteral.emplace(std::in_place_type<StringType>, mLexeme);
                 break;
             case TokenType::NumericLiteral:
-                mLiteral.emplace(std::in_place_type<NumberType>, std::stod(mLexeme));
+                mLiteral.emplace(std::in_place_type<NumberType>, std::strtod(mLexeme.data(), nullptr));
                 break;
             case TokenType::BinaryLiteral:
-                mLiteral.emplace(std::in_place_type<NumberType>, std::stoul(mLexeme, nullptr, 2));
+                mLiteral.emplace(std::in_place_type<NumberType>, std::strtoul(mLexeme.data(), nullptr, 2));
                 break;
             case TokenType::OctalLiteral:
-                mLiteral.emplace(std::in_place_type<NumberType>, std::stoul(mLexeme, nullptr, 8));
+                mLiteral.emplace(std::in_place_type<NumberType>, std::strtoul(mLexeme.data(), nullptr, 8));
                 break;
             case TokenType::HexadecimalLiteral:
-                mLiteral.emplace(std::in_place_type<NumberType>, std::stoul(mLexeme, nullptr, 16));
+                mLiteral.emplace(std::in_place_type<NumberType>, std::strtoul(mLexeme.data(), nullptr, 16));
                 break;
             case TokenType::BooleanLiteral:
                 mLiteral.emplace(std::in_place_type<BooleanType>, (mLexeme == "true"));

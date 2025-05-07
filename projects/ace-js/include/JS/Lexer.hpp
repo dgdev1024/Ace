@@ -226,10 +226,16 @@ namespace js
     private:
 
         /**
-         * @def     `js::Lexer::mSource`
-         * @brief   Contains the source code to be lexed.
+         * @def     `js::Lexer::mSources`
+         * @brief   Contains all of the source code strings which have and are being lexed.
          */
-        std::string mSource = "";
+        std::vector<std::string> mSources;
+
+        /**
+         * @def     `js::Lexer::mCurrentSource`
+         * @brief   A pointer to the source code string currently being lexed.
+         */
+        std::string* mCurrentSource = nullptr;
 
         /**
          * @def     `js::Lexer::mStart`

@@ -136,6 +136,11 @@ namespace js
         AssignBitwiseOr,
         AssignBitwiseXor,
 
+        // Accessing Operators
+        Chain,
+        Coalesce,
+        Spread,
+
         // Groupers
         OpenParen,
         CloseParen,

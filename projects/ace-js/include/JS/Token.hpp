@@ -49,7 +49,7 @@ namespace js
          * 
          * @return  A string with the raw contents of this token.
          */
-        inline const std::string& getLexeme () const { return mLexeme; }
+        inline std::string_view getLexeme () const { return mLexeme; }
 
         /**
          * @fn      `js::Token::hasLiteral`
@@ -119,7 +119,7 @@ namespace js
          * @def     `js::Token::mLexeme`
          * @brief   Contains the raw contents of the token.
          */
-        std::string mLexeme = "";
+        std::string_view mLexeme;
 
         /**
          * @def     `js::Token::mLiteral`

@@ -101,8 +101,8 @@ namespace js
         auto lFileSize = lFile.tellg();
         lFile.seekg(0, lFile.beg);
 
-        mSource.resize(lFileSize);
-        lFile.read(mSource.data(), mSource.size());
+        auto& lSource = mSources.emplace_back(lFileSize, ' ');
+        lFile.read(lSource.data(), lSource.size());
         lFile.close();
 
         mTokens.clear();
@@ -119,7 +119,7 @@ namespace js
 
     bool Lexer::tokenizeString (const std::string& pSource)
     {
-        mSource = pSource;
+        mSources.emplace_back(pSource);
         mTokens.clear();
         return tokenize();
     }
@@ -133,7 +133,16 @@ namespace js
 
     bool Lexer::tokenize ()
     {
+        if (mSources.empty())
+        {
+            std::cerr   << std::format("Lex Error: No source to lex.")
+                        << std::endl;
+            return false;
+        }
+
+        mCurrentSource = &mSources.back();
         mStart = mCurrent = 0;
+        mLine = mColumn = 1;
 
         while (isAtEnd() == false)
         {
@@ -152,12 +161,12 @@ namespace js
 
     bool Lexer::isAtEnd () const
     {
-        return mCurrent >= mSource.length();
+        return mCurrent >= mCurrentSource->length();
     }
 
     char Lexer::advance ()
     {
-        char lChar = mSource[mCurrent++];
+        char lChar = (*mCurrentSource)[mCurrent++];
 
         if (lChar == '\n')  { mLine++; mColumn = 1; }
         else                { mColumn++; }
@@ -167,7 +176,7 @@ namespace js
 
     void Lexer::addToken (const TokenType& pType)
     {
-        std::string_view lSubstr { mSource.data() + mStart, mCurrent - mStart };
+        std::string_view lSubstr { mCurrentSource->data() + mStart, mCurrent - mStart };
 
         mTokens.emplace_back(
             pType,
@@ -189,7 +198,7 @@ namespace js
 
     bool Lexer::match (const char lChar)
     {
-        if (isAtEnd() == true || mSource[mCurrent] != lChar)
+        if (isAtEnd() == true || (*mCurrentSource)[mCurrent] != lChar)
         {
             return false;
         }
@@ -201,12 +210,12 @@ namespace js
 
     char Lexer::peek () const
     {
-        return (isAtEnd() == true) ? '\0' : mSource[mCurrent];
+        return (isAtEnd() == true) ? '\0' : (*mCurrentSource)[mCurrent];
     }
 
     char Lexer::peekNext () const
     {
-        return (mCurrent + 1 >= mSource.length()) ? '\0' : mSource[mCurrent + 1];
+        return (mCurrent + 1 >= mCurrentSource->length()) ? '\0' : (*mCurrentSource)[mCurrent + 1];
     }
 
     void Lexer::skipLineComment ()
@@ -302,14 +311,31 @@ namespace js
                 else if (match('>'))    { addToken(TokenType::Arrow); }
                 else                    { addToken(TokenType::AssignEqual); }
                 break;
+            case '?':
+                if (match('.'))         { addToken(TokenType::Chain); }
+                else if (match('?'))    { addToken(TokenType::Coalesce); }
+                else                    { addToken(TokenType::Question); }
+                break;
+            case '.':
+                if (match('.'))
+                {
+                    if (match('.'))
+                    {
+                        addToken(TokenType::Spread);
+                        break;
+                    }
+
+                    addToken(TokenType::Period);
+                }    
+
+                addToken(TokenType::Period);
+                break;
             case '(':                   addToken(TokenType::OpenParen); break;
             case ')':                   addToken(TokenType::CloseParen); break;
             case '[':                   addToken(TokenType::OpenBracket); break;
             case ']':                   addToken(TokenType::CloseBracket); break;
             case '{':                   addToken(TokenType::OpenBrace); break;
             case '}':                   addToken(TokenType::CloseBrace); break;
-            case '.':                   addToken(TokenType::Period); break;
-            case '?':                   addToken(TokenType::Question); break;
             case ',':                   addToken(TokenType::Comma); break;
             case ';':                   addToken(TokenType::Semicolon); break;
             case ':':                   addToken(TokenType::Colon); break;
@@ -363,10 +389,13 @@ namespace js
 
         advance();  // Advance past the closing quote.
 
+        // Create a string view into the string.
+        std::string_view lSubstr { mCurrentSource->data() + mStart + 1, mCurrent - mStart - 2 };
+
         // Add the token, trimming the surrounding quotes from its lexeme.
         addToken(
             (pQuote == '`') ? TokenType::TemplateLiteral : TokenType::StringLiteral,
-            mSource.substr(mStart + 1, mCurrent - mStart - 2)
+            lSubstr
         );
 
         return true;
@@ -442,7 +471,7 @@ namespace js
         }
 
         // In the case of identifiers, we actually will need to extract the string ahead of time.
-        std::string_view lText { mSource.data() + mStart, mCurrent - mStart };
+        std::string_view lText { mCurrentSource->data() + mStart, mCurrent - mStart };
 
         // Look up the string in the keyword table.
         auto lIter = Keywords.find(lText);
