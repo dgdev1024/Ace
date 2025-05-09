@@ -100,7 +100,7 @@ namespace js
     public:
         explicit BinaryExpression (const Expression::Ptr& pLeft, const Expression::Ptr& pRight,
             Token& pOperator);
-        std::string toString () const override;
+        virtual std::string toString () const override;
 
     public:
         Expression::Ptr mLeft = nullptr;

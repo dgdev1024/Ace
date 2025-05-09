@@ -185,7 +185,7 @@ namespace js
                 lStream << ", ";
             }
         }
-        lStream << ']';
+        lStream << " ]";
         return lStream.str();
     }
 

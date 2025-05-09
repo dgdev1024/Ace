@@ -7,5 +7,6 @@
 #define JS_PRECOMPILED_HPP
 
 #include <format>
+#include <cmath>
 
 #endif

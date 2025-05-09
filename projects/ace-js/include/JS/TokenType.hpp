@@ -187,6 +187,7 @@ namespace js
     template <> struct IsJsonToken<TokenType::Comma>            { static constexpr bool Value = true; };
     template <> struct IsJsonToken<TokenType::Colon>            { static constexpr bool Value = true; };
 
+    using Undefined     = std::monostate;
     using StringType    = std::string;
     using NumberType    = double;
     using BooleanType   = bool;
