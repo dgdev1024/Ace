@@ -206,7 +206,6 @@ namespace js
         static constexpr bool Value = false; 
     };
 
-    template <> struct IsLiteralToken<TokenType::Identifier>            { using Type = StringType; static constexpr bool Value = true; };
     template <> struct IsLiteralToken<TokenType::StringLiteral>         { using Type = StringType; static constexpr bool Value = true; }; 
     template <> struct IsLiteralToken<TokenType::TemplateLiteral>       { using Type = StringType; static constexpr bool Value = true; }; 
     template <> struct IsLiteralToken<TokenType::NumericLiteral>        { using Type = NumberType; static constexpr bool Value = true; }; 

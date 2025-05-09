@@ -52,6 +52,7 @@ namespace js
          * 
          * @return  The list of extracted tokens.
          */
+        std::vector<Token>& getTokens ();
         const std::vector<Token>& getTokens () const;
 
     private:

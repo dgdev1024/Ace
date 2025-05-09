@@ -33,6 +33,22 @@ namespace js
             std::size_t pColumn = 0
         );
 
+        /**
+         * @fn      `js::Token::Token`
+         * @brief   Copies the given @a `Token` into this one.
+         * 
+         * @param   pToken      The token to be copied.
+         */
+        Token (const Token& pToken);
+
+        /**
+         * @fn      `js::Token::Token`
+         * @brief   Moves the given @a `Token` into this one.
+         * 
+         * @param   pToken      The token to be moved.
+         */
+        explicit Token (Token&& pToken);
+
     public:
 
         /**
@@ -65,6 +81,7 @@ namespace js
          * 
          * @return  The literal's `std::variant` value, if present.
          */
+        Literal& getLiteral ();
         const Literal& getLiteral () const;
 
         /**

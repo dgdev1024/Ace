@@ -135,6 +135,11 @@ namespace js
         return tokenize();
     }
 
+    std::vector<Token>& Lexer::getTokens ()
+    {
+        return mTokens;
+    }
+
     const std::vector<Token>& Lexer::getTokens () const
     {
         return mTokens;
@@ -679,6 +684,10 @@ namespace js
         else if (lText == "true" || lText == "false")
         {
             addToken(TokenType::BooleanLiteral, lText);
+        }
+        else if (lText == "null")
+        {
+            addToken(TokenType::NullLiteral);
         }
         else
         {

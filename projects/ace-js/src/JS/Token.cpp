@@ -23,7 +23,6 @@ namespace js
     {
         switch (pType)
         {
-            case TokenType::Identifier:
             case TokenType::StringLiteral:
             case TokenType::TemplateLiteral:
                 mLiteral.emplace(std::in_place_type<StringType>, mLexeme);
@@ -49,7 +48,35 @@ namespace js
         }
     }
 
+    Token::Token (const Token& pToken) :
+        mType   { pToken.mType },
+        mLexeme { pToken.mLexeme },
+        mLine   { pToken.mLine },
+        mColumn { pToken.mColumn }
+    {
+
+    }
+    
+    Token::Token (Token&& pToken) :
+        mType   { std::move(pToken.mType) },
+        mLexeme { std::move(pToken.mLexeme) },
+        mLine   { std::move(pToken.mLine) },
+        mColumn { std::move(pToken.mColumn) }
+    {
+        
+    }
+
     /* Public Functions ***************************************************************************/
+
+    Literal& Token::getLiteral ()
+    {
+        if (mLiteral.has_value() == false)
+        {
+            throw std::runtime_error { "Attempt to retrieve literal from non-literal token!" };
+        }
+
+        return *mLiteral;
+    }
 
     const Literal& Token::getLiteral () const
     {

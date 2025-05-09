@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <JS/Lexer.hpp>
+#include <JS/Parser.hpp>
 #include <AceBox/Precompiled.hpp>
 #include <AceBox/Application.hpp>
 
@@ -31,11 +32,16 @@ namespace acebox
         ace::Application    { pSpec }
     {
         js::Lexer lLexer;
-        if (lLexer.tokenizeFile("./notes/grab-bag-1.js") == true)
+        if (lLexer.tokenizeFile("./notes/grab-bag-2.js") == true)
         {
-            for (const auto& lToken : lLexer.getTokens())
+            js::Parser lParser { lLexer.getTokens() };
+            js::Program lProgram;
+            if (lParser.parse(lProgram) == true)
             {
-                ACE_APP_INFO("{}", lToken.toString());
+                for (const auto& lStatement : lProgram)
+                {
+                    std::cout << lStatement->toString() << std::endl;
+                }
             }
         }
     }
