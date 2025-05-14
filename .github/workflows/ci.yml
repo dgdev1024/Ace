@@ -1,0 +1,33 @@
+# .github/workflows/ci.yml
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Generate VS project
+        run: tools/premake5 vs2022
+      - name: Build Debug
+        run: msbuild Ace.sln /p:Configuration=Debug
+      - name: Build Release
+        run: msbuild Ace.sln /p:Configuration=Release
+      - name: Build Distribute
+        run: msbuild Ace.sln /p:Configuration=Distribute
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Generate Makefiles
+        run: tools/premake5 gmake
+      - name: Build Debug
+        run: make
+      - name: Build Release
+        run: make config=Release
+      - name: Build Distribute
+        run: make config=Distribute
+
+  # … add macOS, Android, iOS similarly

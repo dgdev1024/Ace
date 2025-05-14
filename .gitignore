@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+
+# Build Output
+build/
+assets/
+Makefile
+Ace.sln
+
+# VSCode
+.vscode/
