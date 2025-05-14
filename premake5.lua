@@ -7,7 +7,7 @@ local outputdir = "%{cfg.system}-%{cfg.architecture}-%{cfg.buildcfg}"
 
 -- Include any and all common external dependencies
 local external_includes = {
-    "external/**/include"
+    "./external/**/include"
 }
 
 -- Ace Workspace
@@ -49,11 +49,11 @@ workspace "Ace"
     -- Project: `AceEngine` - Ace Engine Library
     project "AceEngine"
         kind        "StaticLib"
-        location    "build/%{outputdir}/AceEngine"
-        targetdir   "build/%{outputdir}/bin"
-        objdir      "build/%{outputdir}/obj/AceEngine"
-        files       { "engine/Ace/**.hpp", "engine/Ace/**.cpp" }
-        includedirs { "engine", table.unpack(external_includes) }
+        location    "./build/%{outputdir}/AceEngine"
+        targetdir   "./build/%{outputdir}/bin"
+        objdir      "./build/%{outputdir}/obj/AceEngine"
+        files       { "./engine/Ace/**.hpp", "./engine/Ace/**.cpp" }
+        includedirs { "./engine", table.unpack(external_includes) }
 
         libdirs {
 
@@ -73,11 +73,11 @@ workspace "Ace"
     -- Project: `Sandbox` - Ace Engine Sandbox Application
     project "Sandbox"
         kind        "ConsoleApp"
-        location    "build/%{outputdir}/Sandbox"
-        targetdir   "build/%{outputdir}/bin"
-        objdir      "build/%{outputdir}/obj/Sandbox"
-        files       { "examples/Sandbox/**.hpp", "examples/Sandbox/**.cpp" }
-        includedirs { "engine", table.unpack(external_includes) }
+        location    "./build/%{outputdir}/Sandbox"
+        targetdir   "./build/%{outputdir}/bin"
+        objdir      "./build/%{outputdir}/obj/Sandbox"
+        files       { "./examples/Sandbox/**.hpp", "./examples/Sandbox/**.cpp" }
+        includedirs { "./engine", table.unpack(external_includes) }
         links       { "AceEngine" }
         
         filter { "system:windows" }

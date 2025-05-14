@@ -12,11 +12,11 @@ jobs:
       - name: Generate VS project
         run: tools/premake5 vs2022
       - name: Build Debug
-        run: msbuild Ace.sln /p:Configuration=Debug
+        run: msbuild ./Ace.sln /p:Configuration=Debug
       - name: Build Release
-        run: msbuild Ace.sln /p:Configuration=Release
+        run: msbuild ./Ace.sln /p:Configuration=Release
       - name: Build Distribute
-        run: msbuild Ace.sln /p:Configuration=Distribute
+        run: msbuild ./Ace.sln /p:Configuration=Distribute
 
   build-linux:
     runs-on: ubuntu-latest
