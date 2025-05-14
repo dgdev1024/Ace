@@ -26,8 +26,8 @@ jobs:
       - name: Build Debug
         run: make
       - name: Build Release
-        run: make config=Release
+        run: make config=release
       - name: Build Distribute
-        run: make config=Distribute
+        run: make config=distribute
 
   # … add macOS, Android, iOS similarly
