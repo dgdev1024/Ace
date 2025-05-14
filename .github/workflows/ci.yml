@@ -8,6 +8,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: microsoft/setup-msbuild@v2
       - name: Generate VS project
         run: tools/premake5 vs2022
       - name: Build Debug
