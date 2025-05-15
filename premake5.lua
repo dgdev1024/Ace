@@ -44,6 +44,10 @@ workspace "Ace"
         }
         optimize "Full"
         symbols "Off"
+    filter { "system:linux" }
+        defines {
+            "ACE_LINUX"
+        }
     filter {}
 
     -- Project: `AceEngine` - Ace Engine Library
@@ -77,7 +81,7 @@ workspace "Ace"
         targetdir   "./build/%{outputdir}/bin"
         objdir      "./build/%{outputdir}/obj/Sandbox"
         files       { "./examples/Sandbox/**.hpp", "./examples/Sandbox/**.cpp" }
-        includedirs { "./engine", table.unpack(external_includes) }
+        includedirs { "./engine", "./examples", table.unpack(external_includes) }
         links       { "AceEngine" }
         
         filter { "system:windows" }

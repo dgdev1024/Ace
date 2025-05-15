@@ -4,6 +4,7 @@
 
 #pragma once
 
-#include <iostream>
+#include <memory>
+#include <cstdint>
 
 #define ACE_API
