@@ -1,30 +1,31 @@
 /**
- * @file    Ace/System/Application.cpp
+ * @file    Ace/System/IApplication.cpp
  */
 
-#include <Ace/System/Application.hpp>
+#include <Ace/System/Logger.hpp>
+#include <Ace/System/IApplication.hpp>
 
 namespace ace
 {
 
     /* Constructors and Destructor ********************************************/
 
-    Application::Application (
+    IApplication::IApplication (
         const ApplicationSpec& pSpec
     ) :
         mFixedTimestep  { 1.0f / pSpec.mFramerate }
     {
-        
+        Logger::Initialize();
     }
 
-    Application::~Application ()
+    IApplication::~IApplication ()
     {
-
+        Logger::Shutdown();
     }
 
     /* Public Methods *********************************************************/
 
-    std::int32_t Application::start ()
+    std::int32_t IApplication::start ()
     {
         return 0;
     }

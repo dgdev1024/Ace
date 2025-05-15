@@ -4,7 +4,7 @@
  */
 
 #pragma once
-#include <Ace/System/Application.hpp>
+#include <Ace/System/IApplication.hpp>
 
 #if !defined(ACE_USE_OWN_MAIN)
 #if defined(ACE_LINUX)

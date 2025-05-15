@@ -8,7 +8,7 @@
 namespace sandbox
 {
 
-    class Application : public ace::Application
+    class Application : public ace::IApplication
     {
     public:
         explicit Application (const ace::ApplicationSpec& pSpec);

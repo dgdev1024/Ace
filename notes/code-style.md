@@ -6,6 +6,7 @@
 - Implementation Filenames: `PascalCase.cpp`
 - Root Namespace: `ace`
 - Inner Namespaces, Classes, Structs, Enumerators, Functions, Methods: `PascalCase`
+- Interface (Pure Virtual) Classes/Structures: `IPascalCase`
 - Constants, Static Constants, Enumerations: `SCREAMING_SNAKE_CASE`
 - Function Parameters: `pPascalCase`
 - Member Variables: `mPascalCase`

@@ -5,3 +5,4 @@
 
 #pragma once
 #include <Ace/System/EntryPoint.hpp>
+#include <Ace/System/Logger.hpp>
