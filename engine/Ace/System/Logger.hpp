@@ -4,7 +4,7 @@
  */
 
 #pragma once
-#include <Ace/Common.hpp>
+#include <Ace/System/RingBuffer.hpp>
 
 namespace ace
 {
@@ -68,6 +68,13 @@ namespace ace
     public:
 
         /**
+         * @brief   The maximum capacity of the logger's ring buffer.
+         */
+        static constexpr std::size_t MAX_CAPACITY = 1 << 10;
+
+    public:
+
+        /**
          * @brief   Initializes the @a `Logger` and starts its background worker
          *          thread.
          */
@@ -107,7 +114,7 @@ namespace ace
             const char*         pFunction,
             const char*         pFile,
             std::int32_t        pLine,
-            const std::string&  pMessage
+            std::string         pMessage
         );
 
     public:
@@ -172,9 +179,7 @@ namespace ace
     private:
         static std::atomic<bool>                        sRunning;       ///< @brief Has the logger been initialized?
         static std::thread                              sWorkerThread;  ///< @brief The background worker thread responsible for processing the log event queue.
-        static std::mutex                               sQueueMutex;    ///< @brief The mutex used to lock down the log event queue when it is being processed.
-        static std::condition_variable                  sQueueMutexCV;  ///< @brief Unlocks the queue mutex on sleep; re-acquires lock on wake and predicate.
-        static std::queue<LogEvent>                     sQueue;         ///< @brief The queue of log events to be processed.
+        static RingBuffer<LogEvent, MAX_CAPACITY>       sQueue;         ///< @brief The circular queue of log events.
         static std::mutex                               sSinksMutex;    ///< @brief The mutex used to lock down the sinks container.
         static std::vector<std::shared_ptr<ILogSink>>   sSinks;         ///< @brief The container of log sinks.
 

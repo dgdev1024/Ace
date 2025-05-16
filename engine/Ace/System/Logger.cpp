@@ -10,13 +10,11 @@ namespace ace
 
     /* Static Members *********************************************************/
 
-    std::atomic<bool>                        Logger::sRunning { false };     
-    std::thread                              Logger::sWorkerThread;
-    std::mutex                               Logger::sQueueMutex;  
-    std::condition_variable                  Logger::sQueueMutexCV;
-    std::queue<LogEvent>                     Logger::sQueue;       
-    std::mutex                               Logger::sSinksMutex;  
-    std::vector<std::shared_ptr<ILogSink>>   Logger::sSinks;       
+    std::atomic<bool>                           Logger::sRunning { false };     
+    std::thread                                 Logger::sWorkerThread;
+    RingBuffer<LogEvent, Logger::MAX_CAPACITY>  Logger::sQueue;    
+    std::mutex                                  Logger::sSinksMutex;  
+    std::vector<std::shared_ptr<ILogSink>>      Logger::sSinks;       
 
     /* Public Methods *********************************************************/
 
@@ -46,17 +44,6 @@ namespace ace
             return;
         }
 
-        // If a thread is "put to sleep" using the
-        // `std::condition_variable::wait` method, any lock currently locking
-        // that thread down is temporarly released.
-        //
-        // The `std::condition_variable::notify_one` and
-        // `std::condition_variable::notify_all` methods are used to "wake up"
-        // that thread, causing that temporarly-relased lock to be re-acquired.
-        // The latter of these methods is used here in order to process any
-        // outstanding log events before shutting down the logging subsystem.
-        sQueueMutexCV.notify_all();
-
         // Join (stop) the logger's background worker thread, if allowed.
         if (sWorkerThread.joinable() == true)
         {
@@ -78,7 +65,7 @@ namespace ace
         const char*         pFunction,
         const char*         pFile,
         std::int32_t        pLine,
-        const std::string&  pMessage
+        std::string         pMessage
     )
     {
         // If the logging subsystem has not yet been initialized, initialize
@@ -95,67 +82,35 @@ namespace ace
             .mFunction      = (pFunction != nullptr) ? pFunction : "",
             .mFile          = (pFile != nullptr) ? pFile : "",
             .mLine          = pLine,
-            .mMessage       = pMessage
+            .mMessage       = std::move(pMessage)
         };
 
-        // Under a lock, move the log event into the event queue.
-        {
-            std::unique_lock lGuard { sQueueMutex };
-            sQueue.push(std::move(lEvent));
-        }
-
-        // If the logger's background worker thread is asleep, wake it up here.
-        sQueueMutexCV.notify_one();
+        // Enqueue the event.
+        sQueue.enqueue(lEvent);
     }
 
     /* Private Methods ********************************************************/
 
     void Logger::ProcessQueue ()
     {
-        // Under a lock, the calling thread will continue processing the log
-        // event queue as long as it's not empty and the logger subsystem is
-        // still running.
-        std::unique_lock lGuard { sQueueMutex };
-        
-        // `std::atomic::load` retrieves the value of an atomic variable - in
-        // this case, whether or not the logging subsystem is still running.
-        while (sRunning.load() == true || sQueue.empty() == false)
+        // While the logging subsystem is still running, dispatch any log
+        // events as they become available.
+        while (sRunning.load(std::memory_order_acquire) == true)
         {
-
-            // The `std::condition_variable` is used here to temporarly release 
-            // the `std::unique_lock` we set up at the start of this method, then
-            // re-acquire that lock when one of the following becomes true:
-            // - The logging subsystem has shut down.
-            // - The log event queue is no longer empty - there are log events to process.
-            sQueueMutexCV.wait(
-                lGuard,
-                []
-                {
-                    return
-                        sRunning.load() == false ||
-                        sQueue.empty() == false;
-                }
-            );
-
-            // Once we reach here, the `std::unique_lock` which was temporarly
-            // released by the above `std::condition_variable` has been
-            // re-acquired, at which point the log events currently enqueued,
-            // if any, need to be processed.
-            while (sQueue.empty() == false)
+            while (auto lEvent = sQueue.dequeue())
             {
-
-                // Move, then pop the event at the front of the queue.
-                LogEvent lEvent = std::move(sQueue.front());
-                sQueue.pop();
-
-                // Temporarly release this method's `std::unique_lock` in order
-                // to dispatch this event. Once dispatched, re-acquire the lock.
-                lGuard.unlock();
-                Dispatch(lEvent);
-                lGuard.lock();
-
+                Dispatch(*lEvent);
             }
 
+            // Yield the thread to reduce CPU spin.
+            std::this_thread::yield();
+        }
+
+        // When the logging subsystem shuts down, dispatch any outstanding log
+        // events.
+        while (auto lEvent = sQueue.dequeue())
+        {
+            Dispatch(*lEvent);
         }
     }
 
