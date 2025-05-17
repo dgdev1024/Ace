@@ -34,6 +34,7 @@
 # Build Output
 build/
 assets/
+logs/
 Makefile
 Ace.sln
 

@@ -12,7 +12,7 @@ namespace sandbox
     {
     public:
         explicit Application (const ace::ApplicationSpec& pSpec);
-        virtual ~Application ();
+        virtual ~Application () override;
         
     };
 

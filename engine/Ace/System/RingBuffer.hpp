@@ -68,8 +68,7 @@ namespace ace
         {
             for (std::size_t i = 0; i < Capacity; ++i)
             {
-                mBuffer[i].mSequenceNumber.store(i,
-                    std::memory_order_relaxed);
+                mBuffer[i].mSequenceNumber.store(i, std::memory_order_relaxed);
             }
         }
 
@@ -81,7 +80,7 @@ namespace ace
          * @return  `true` if the item is enqueued; `false` if there was no room
          *          available in the queue.
          */
-        bool enqueue (
+        bool Enqueue (
             const T&    pItem
         ) noexcept
         {
@@ -118,7 +117,7 @@ namespace ace
             lCell.mData = pItem;
             lCell.mSequenceNumber.store(lPosition + 1,
                 std::memory_order_release);
-
+                
             return true;
 
         }
@@ -129,7 +128,7 @@ namespace ace
          * @return  An `std::optional` which contains the dequeued item if one
          *          was popped.
          */
-        std::optional<T> dequeue () noexcept
+        std::optional<T> Dequeue () noexcept
         {
 
             // Index the appropriate cell.
@@ -148,13 +147,19 @@ namespace ace
             // Move the item out of the queue, then update that cell's sequence
             // number and the tail pointer.
             T lItem = std::move(lCell.mData);
-            lCell.mSequenceNumber.store(lPosition = Capacity,
+            lCell.mSequenceNumber.store(lPosition + Capacity,
                 std::memory_order_release);
             mTail.store(lPosition + 1, std::memory_order_relaxed);
 
             return lItem;
 
         }
+
+    private:
+        RingBuffer (const RingBuffer&) = delete;
+        RingBuffer (RingBuffer&&) = delete;
+        void operator= (const RingBuffer&) = delete;
+        void operator= (RingBuffer&&) = delete;
 
     private:
                     std::array<Cell, Capacity>  mBuffer;        ///< @brief Contains the circular queue's data, and their respective sequence numbers.

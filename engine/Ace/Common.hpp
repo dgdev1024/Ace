@@ -8,7 +8,9 @@
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
+#include <filesystem>
 #include <format>
+#include <fstream>
 #include <functional>
 #include <memory>
 #include <mutex>
@@ -26,3 +28,8 @@
 #include <cstdint>
 
 #define ACE_API
+
+namespace fs = std::filesystem;
+
+static_assert(sizeof(std::size_t) == sizeof(std::uintmax_t),
+    "'std::size_t' != 'std::uintmax_t'!");

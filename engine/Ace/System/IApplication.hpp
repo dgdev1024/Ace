@@ -53,7 +53,7 @@ namespace ace
          * @return  `0` if the loop exits without error; a non-zero number if an 
          *          error occurs.
          */
-        virtual std::int32_t start ();
+        virtual std::int32_t Start ();
 
     protected:
         float mFixedTimestep = 0.0f;    ///< @brief The application's fixed timestep; controls how frequently @a `fixedUpdate` is called.
@@ -67,6 +67,6 @@ namespace ace
      * 
      * @return  An `std::unique_ptr` to the newly-created application.
      */
-    std::unique_ptr<IApplication> makeApplication ();
+    std::unique_ptr<IApplication> MakeApplication ();
 
 }

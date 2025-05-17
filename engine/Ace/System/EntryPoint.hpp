@@ -11,8 +11,8 @@
 
 int main ()
 {
-    auto lApp = ace::makeApplication();
-    return lApp->start();
+    auto lApp = ace::MakeApplication();
+    return lApp->Start();
 }
 
 #else

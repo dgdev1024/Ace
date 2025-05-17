@@ -2,8 +2,7 @@
  * @file    Ace/System/Logger.cpp
  */
 
-#include <iostream>
-#include <Ace/System/Logger.hpp>
+#include <Ace/System/LoggerConsoleSink.hpp>
 
 namespace ace
 {
@@ -82,35 +81,44 @@ namespace ace
             .mFunction      = (pFunction != nullptr) ? pFunction : "",
             .mFile          = (pFile != nullptr) ? pFile : "",
             .mLine          = pLine,
+            .mLevel         = pLevel,
             .mMessage       = std::move(pMessage)
         };
 
         // Enqueue the event.
-        sQueue.enqueue(lEvent);
+        sQueue.Enqueue(lEvent);
     }
 
     /* Private Methods ********************************************************/
 
     void Logger::ProcessQueue ()
     {
+        std::size_t i = 0;
+
         // While the logging subsystem is still running, dispatch any log
         // events as they become available.
         while (sRunning.load(std::memory_order_acquire) == true)
         {
-            while (auto lEvent = sQueue.dequeue())
+            i = 0;
+
+            while (auto lEvent = sQueue.Dequeue())
             {
                 Dispatch(*lEvent);
+                ++i;
             }
 
             // Yield the thread to reduce CPU spin.
             std::this_thread::yield();
         }
 
+
         // When the logging subsystem shuts down, dispatch any outstanding log
         // events.
-        while (auto lEvent = sQueue.dequeue())
+        i = 0;
+        while (auto lEvent = sQueue.Dequeue())
         {
             Dispatch(*lEvent);
+            ++i;
         }
     }
 

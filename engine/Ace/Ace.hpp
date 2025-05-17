@@ -5,4 +5,6 @@
 
 #pragma once
 #include <Ace/System/EntryPoint.hpp>
-#include <Ace/System/Logger.hpp>
+#include <Ace/System/LoggerConsoleSink.hpp>
+#include <Ace/System/LoggerFileSink.hpp>
+#include <Ace/System/LoggerRenderSink.hpp>

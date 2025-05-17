@@ -158,6 +158,30 @@ namespace ace
             );
         }
 
+        /**
+         * @brief   Retrieves a string representation of the given log severity
+         *          level.
+         * 
+         * @param   pLevel      The log severity level enumeration to stringify.
+         * 
+         * @return  The log level's string representation.
+         */
+        inline static constexpr const char* StringifyLevel (
+            LogLevel    pLevel
+        )
+        {
+            switch (pLevel)
+            {
+                case LogLevel::TRACE:       return "TRACE";
+                case LogLevel::DEBUG:       return "DEBUG";
+                case LogLevel::INFO:        return "INFO";
+                case LogLevel::WARNING:     return "WARNING";
+                case LogLevel::ERROR:       return "ERROR";
+                case LogLevel::CRITICAL:    return "CRITICAL";
+                default:                    return "???";
+            }
+        }
+
     private:
 
         /**
