@@ -14,6 +14,13 @@ std::unique_ptr<ace::IApplication> ace::MakeApplication ()
 namespace sandbox
 {
 
+    /* Test Structure *********************************************************/
+
+    struct WindowResized
+    {
+        std::uint32_t mWidth, mHeight;
+    };
+
     /* Constructors and Destructor ********************************************/
 
     Application::Application (
@@ -21,11 +28,24 @@ namespace sandbox
     ):
         ace::IApplication   { pSpec }
     {
+        ace::Logger::RegisterSink(std::make_shared<ace::LoggerConsoleSink>());
+
+        ace::EventBus::Subscribe<WindowResized>(
+            [] (const WindowResized& pEvent)
+            {
+                ACE_LOG_INFO("Window Resized: {}, {}", pEvent.mWidth,
+                    pEvent.mHeight);
+                return false;
+            }
+        );
+
+        ace::EventBus::Publish(WindowResized { 1280, 780 });
     }
 
     Application::~Application ()
     {
-        
+        ACE_LOG_WARNING("The destructor is running.");
+        ace::EventBus::Dispatch();
     }
 
 }
