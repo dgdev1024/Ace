@@ -2,6 +2,7 @@
  * @file    Ace/System/VirtualArchiveFile.cpp
  */
 
+#include <miniz.h>
 #include <Ace/System/VirtualArchiveFile.hpp>
 
 namespace ace
@@ -15,8 +16,79 @@ namespace ace
     ) :
         IVirtualFile {}
     {
+
+        // Ensure that an archive path and entry name were provided.
+        if (pArchivePath.empty() == true)
+        {
+            ACE_THROW(
+                std::invalid_argument,
+                "{}: No archive path provided!",
+                "VirtualArchiveFile"
+            );
+        }
+        else if (pEntryName.empty() == true)
+        {
+            ACE_THROW(
+                std::invalid_argument,
+                "{}: No entry name provided!",
+                "VirtualArchiveFile"
+            );
+        }
         
-        
+        // Attempt to open the archive file.
+        mz_zip_archive lZip;
+        if (
+            mz_zip_reader_init_file(&lZip, pArchivePath.c_str(), 0) == MZ_FALSE
+        )
+        {
+            ACE_THROW(
+                std::runtime_error,
+                "{}: Could not open archive file '{}'!",
+                "VirtualArchiveFile", pArchivePath.string()
+            );
+        }
+
+        // Locate the file with the given entry name inside the archive. Get its
+        // index if it exists.
+        auto lIndex = mz_zip_reader_locate_file(
+            &lZip,
+            pEntryName.c_str(),
+            nullptr,
+            0
+        );
+        if (lIndex < 0)
+        {
+            mz_zip_reader_end(&lZip);
+            ACE_THROW(
+                std::out_of_range,
+                "{}: Entry '{}' not found in archive file '{}'!",
+                "VirtualArchiveFile", pEntryName, pArchivePath.string()
+            );
+        }
+
+        // Get the expected size of the decompressed data.
+        mz_zip_archive_file_stat lStat;
+        mz_zip_reader_file_stat(&lZip, lIndex, &lStat);
+
+        // Attempt to read the decompressed data into this file's buffer.
+        mBuffer.resize(lStat.m_uncomp_size);
+        if (
+            mz_zip_reader_extract_to_mem(&lZip, lIndex, mBuffer.data(),
+                lStat.m_uncomp_size, 0) == MZ_FALSE
+        )
+        {
+            mz_zip_reader_end(&lZip);
+            ACE_THROW(
+                std::runtime_error,
+                "{}: Could not extract '{}' from archive file '{}'!",
+                "VirtualArchiveFile", pEntryName, pArchivePath.string()
+            );
+        }
+
+        mSize = lStat.m_uncomp_size;
+        mPosition = 0;
+
+        mz_zip_reader_end(&lZip);
 
     }
 

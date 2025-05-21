@@ -50,6 +50,15 @@ workspace "Ace"
         }
     filter {}
 
+    -- Dependency: `miniz` - ZIP Archive Library
+    project "miniz"
+        kind        "StaticLib"
+        location    "./build/%{outputdir}/miniz"
+        targetdir   "./build/%{outputdir}/bin"
+        objdir      "./build/%{outputdir}/obj/miniz"
+        files       { "./external/miniz/*.h", "./external/miniz/*.c" }
+        includedirs { "./external/miniz" }
+
     -- Project: `AceEngine` - Ace Engine Library
     project "AceEngine"
         kind        "StaticLib"
