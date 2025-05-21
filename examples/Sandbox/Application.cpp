@@ -14,13 +14,6 @@ std::unique_ptr<ace::IApplication> ace::MakeApplication ()
 namespace sandbox
 {
 
-    /* Test Structure *********************************************************/
-
-    struct WindowResized
-    {
-        std::uint32_t mWidth, mHeight;
-    };
-
     /* Constructors and Destructor ********************************************/
 
     Application::Application (
@@ -28,24 +21,23 @@ namespace sandbox
     ):
         ace::IApplication   { pSpec }
     {
-        ace::Logger::RegisterSink(std::make_shared<ace::LoggerConsoleSink>());
-
-        ace::EventBus::Subscribe<WindowResized>(
-            [] (const WindowResized& pEvent)
+        ace::VFS::MountPhysicalDirectory("my_notes", "./notes");
+        if (auto lFile = ace::VFS::OpenLogicalFile("my_notes/cgpt.assets.md"))
+        {
+            astd::byte_buffer lBuffer(lFile->GetSize());
+            lFile->Read(lBuffer.data(), lBuffer.size());
+            for (const auto& lByte : lBuffer)
             {
-                ACE_LOG_INFO("Window Resized: {}, {}", pEvent.mWidth,
-                    pEvent.mHeight);
-                return false;
+                std::printf("%c", lByte);
             }
-        );
 
-        ace::EventBus::Publish(WindowResized { 1280, 780 });
+            std::printf("\n");
+        }
     }
 
     Application::~Application ()
     {
-        ACE_LOG_WARNING("The destructor is running.");
-        ace::EventBus::Dispatch();
+        
     }
 
 }

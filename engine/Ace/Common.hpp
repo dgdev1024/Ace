@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <array>
 #include <atomic>
 #include <chrono>
@@ -16,6 +17,8 @@
 #include <mutex>
 #include <optional>
 #include <queue>
+#include <random>
+#include <ranges>
 #include <string>
 #include <string_view>
 #include <thread>
@@ -31,6 +34,8 @@
 
 #define ACE_API
 #define ACE_TYPEID(pType) std::type_index(typeid(pType))
+#define ACE_THROW(pEx, ...) \
+    throw pEx { std::format(__VA_ARGS__) }
 
 namespace fs = std::filesystem;
 
@@ -38,3 +43,10 @@ static_assert(sizeof(std::size_t) == sizeof(std::uintmax_t),
     "'std::size_t' != 'std::uintmax_t'!");
 static_assert(sizeof(std::size_t) == sizeof(std::uint64_t),
     "'std::size_t' != 'std::uint64_t'!");
+
+namespace astd
+{
+                                        using byte_buffer = std::vector<std::uint8_t>;
+    template <typename T>               using raw_ptr = T*;
+    template <typename T, typename U>   using vector_map = std::vector<std::pair<T, U>>;
+}
