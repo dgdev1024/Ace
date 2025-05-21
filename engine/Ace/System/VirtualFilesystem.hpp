@@ -6,6 +6,7 @@
 
 #pragma once
 #include <Ace/System/VirtualLocalFile.hpp>
+#include <Ace/System/VirtualArchiveFile.hpp>
 
 namespace ace
 {
@@ -27,18 +28,21 @@ namespace ace
          * @param   pRealPath   The actual path to be mounted.
          */
         static void MountPhysicalDirectory (
-            std::string pMountPoint,
-            fs::path    pRealPath
+            const std::string&  pMountPoint,
+            const fs::path&     pRealPath
         );
 
         /**
-         * @brief   Un-mounts all physical directories with the given logical
-         *          mount point.
+         * @brief   Mounts a `.zip` archive file with the given logical mount
+         *          point.
          * 
-         * @param   pMountPoint The name of the logical mount point to un-mount.
+         * @param   pMountPoint     The name of the logical mount point under
+         *                          which given path will be mounted.
+         * @param   pArchivePath    The path to the archive file to mount.
          */
-        static void UnmountPhysicalDirectory (
-            const std::string&  pMountPoint
+        static void MountArchive (
+            const std::string&  pMountPoint,
+            const fs::path&     pArchivePath
         );
 
         /**
@@ -50,25 +54,73 @@ namespace ace
          * @return  An `std::unique_ptr` to the opened virtual file if found;
          *          `nullptr` otherwise.
          */
-        static std::unique_ptr<IVirtualFile> OpenLogicalFile (
-            const std::string&  pLogicalPath
-        );
-
-        /**
-         * @brief   Provides a list of all files found at the given logical
-         *          mount point.
-         * 
-         * @param   pLogicalPath    The logical path to the directory to list.
-         * 
-         * @return  An `std::vector<std::string>` containing the directory's
-         *          logical contents.
-         */
-        static std::vector<std::string> ListDirectory (
+        static std::unique_ptr<IVirtualFile> OpenFile (
             const std::string&  pLogicalPath
         );
 
     private:
-        static astd::vector_map<std::string, fs::path>  sMounts;    ///< @brief The map of logical mount points.
+    
+        /**
+         * @brief   A structure representing a physical directory mount, mapping
+         *          a mount point to a real, physical folder path.
+         */
+        struct PhysicalMount
+        {
+            std::string mMountPoint;
+            fs::path    mRealPath;
+        };
+
+        /**
+         * @brief   A structure representing an archive mount, mapping a mount
+         *          point to a path to a compressed archive (`.zip`) file's
+         *          contents.
+         */
+        struct ArchiveMount
+        {
+            std::string mMountPoint;
+            fs::path    mArchivePath;
+        };
+
+        /**
+         * @brief   Defines a union representing a mount point.
+         */
+        using Mount = std::variant<
+            PhysicalMount,
+            ArchiveMount
+        >;
+
+    private:
+
+        /**
+         * @brief   Normalizes the given path string, removing any trailing
+         *          slashes, and converting any remaining backslashes `\\` to
+         *          forward-slashes `/`.
+         * 
+         * @param   pPath   The path string to normalize.
+         * 
+         * @return  The normalized string.
+         */
+        static std::string NormalizePath (
+            const std::string&  pPath
+        );
+
+        /**
+         * @brief   Attempts to open a file in the given mount at the given
+         *          logical path.
+         * 
+         * @param   pMount          The mount to look for the file in.
+         * @param   pLogicalPath    The file's logical path string.
+         * 
+         * @return  An `std::unique_ptr` to the opened virtual file if found;
+         *          `nullptr` otherwise.
+         */
+        static std::unique_ptr<IVirtualFile> AttemptOpen (
+            const Mount&        pMount,
+            const std::string&  pLogicalPath
+        );
+
+    private:
+        static std::vector<Mount> sMounts;      ///< @brief The list of mounts.
 
     };
 

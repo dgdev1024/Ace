@@ -10,6 +10,11 @@ local external_includes = {
     "./external/**/include"
 }
 
+-- Include any and all link libraries
+local external_links = {
+    "miniz"
+}
+
 -- Ace Workspace
 workspace "Ace"
 
@@ -71,13 +76,6 @@ workspace "Ace"
             "./external/miniz",
             table.unpack(external_includes) 
         }
-
-        libdirs {
-
-        }
-        links {
-            "miniz"
-        }
         
         filter { "system:windows" }
             systemversion   "latest"
@@ -95,7 +93,7 @@ workspace "Ace"
         objdir      "./build/%{outputdir}/obj/Sandbox"
         files       { "./examples/Sandbox/**.hpp", "./examples/Sandbox/**.cpp" }
         includedirs { "./engine", "./examples", table.unpack(external_includes) }
-        links       { "AceEngine" }
+        links       { "AceEngine", table.unpack(external_links) }
         
         filter { "system:windows" }
             systemversion   "latest"

@@ -21,8 +21,8 @@ namespace sandbox
     ):
         ace::IApplication   { pSpec }
     {
-        ace::VFS::MountPhysicalDirectory("my_notes", "./notes");
-        if (auto lFile = ace::VFS::OpenLogicalFile("my_notes/cgpt.assets.md"))
+        ace::VFS::MountArchive("my_test", "./notes/test.zip");
+        if (auto lFile = ace::VFS::OpenFile("my_test/cgpt.roadmap.md"))
         {
             astd::byte_buffer lBuffer(lFile->GetSize());
             lFile->Read(lBuffer.data(), lBuffer.size());

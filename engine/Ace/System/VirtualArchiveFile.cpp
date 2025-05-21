@@ -36,15 +36,17 @@ namespace ace
         }
         
         // Attempt to open the archive file.
-        mz_zip_archive lZip;
+        mz_zip_archive lZip { };
         if (
-            mz_zip_reader_init_file(&lZip, pArchivePath.c_str(), 0) == MZ_FALSE
+            mz_zip_reader_init_file(&lZip, pArchivePath.c_str(), 
+                0) == MZ_FALSE
         )
         {
             ACE_THROW(
                 std::runtime_error,
-                "{}: Could not open archive file '{}'!",
-                "VirtualArchiveFile", pArchivePath.string()
+                "{}: Could not open archive file '{}' - {}!",
+                "VirtualArchiveFile", pArchivePath.string(),
+                mz_zip_get_error_string(mz_zip_get_last_error(&lZip))
             );
         }
 
@@ -58,11 +60,12 @@ namespace ace
         );
         if (lIndex < 0)
         {
+            auto lErrorMsg = mz_zip_get_error_string(mz_zip_get_last_error(&lZip));
             mz_zip_reader_end(&lZip);
             ACE_THROW(
                 std::out_of_range,
-                "{}: Entry '{}' not found in archive file '{}'!",
-                "VirtualArchiveFile", pEntryName, pArchivePath.string()
+                "{}: Entry '{}' not found in archive file '{}' - {}!",
+                "VirtualArchiveFile", pEntryName, pArchivePath.string(), lErrorMsg
             );
         }
 
@@ -77,11 +80,12 @@ namespace ace
                 lStat.m_uncomp_size, 0) == MZ_FALSE
         )
         {
+            auto lErrorMsg = mz_zip_get_error_string(mz_zip_get_last_error(&lZip));
             mz_zip_reader_end(&lZip);
             ACE_THROW(
                 std::runtime_error,
-                "{}: Could not extract '{}' from archive file '{}'!",
-                "VirtualArchiveFile", pEntryName, pArchivePath.string()
+                "{}: Could not extract '{}' from archive file '{}' - {}!",
+                "VirtualArchiveFile", pEntryName, pArchivePath.string(), lErrorMsg
             );
         }
 

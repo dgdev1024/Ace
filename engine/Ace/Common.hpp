@@ -27,6 +27,7 @@
 #include <type_traits>
 #include <unordered_map>
 #include <unordered_set>
+#include <variant>
 #include <vector>
 
 #include <cstddef>
@@ -50,4 +51,10 @@ namespace astd
                                         using byte_buffer = std::vector<std::uint8_t>;
     template <typename T>               using raw_ptr = T*;
     template <typename T, typename U>   using vector_map = std::vector<std::pair<T, U>>;
+
+    template <typename... Ts>
+    struct overloaded : Ts... { using Ts::operator()...; };
+    template <typename... Ts>
+    overloaded(Ts...) -> overloaded<Ts...>;
+    
 }

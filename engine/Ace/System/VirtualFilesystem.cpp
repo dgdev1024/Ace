@@ -9,204 +9,154 @@ namespace ace
 
     /* Static Members *********************************************************/
 
-    astd::vector_map<std::string, fs::path>  VirtualFilesystem::sMounts;
+    std::vector<VirtualFilesystem::Mount>   VirtualFilesystem::sMounts;
 
     /* Public Methods *********************************************************/
 
     void VirtualFilesystem::MountPhysicalDirectory (
-        std::string pMountPoint,
-        fs::path    pRealPath
+        const std::string&  pMountPoint,
+        const fs::path&     pRealPath
     )
     {
-        // Normalize the mount point string:
-        // - Replace any Windows-style slashes '\' with a standard slash '/'.
-        // - Remove the leading and trailing separator slashes, if any.
-        std::ranges::replace(pMountPoint, '\\', '/');
-        if (pMountPoint.empty() == false && pMountPoint.front() == '/')    
-            { pMountPoint.erase(pMountPoint.begin()); }
-        if (pMountPoint.empty() == false && pMountPoint.back() == '/')
-            { pMountPoint.pop_back(); }
-        if (pMountPoint.empty() == true)
-        {
-            ACE_THROW(
-                std::invalid_argument,
-                "VirtualFilesystem: Attempt to mount physical directory with no mount point!"
-            );
-        }
-
-        // Ensure that the physical directory provided exists, and is actually
-        // a physical directory.
-        if (
-            fs::exists(pRealPath) == false ||
-            fs::is_directory(pRealPath) == false
-        )
+        std::string lMountPoint = NormalizePath(pMountPoint);
+        if (fs::is_directory(pRealPath) == false)
         {
             ACE_THROW(
                 std::runtime_error,
-                "VirtualFilesystem: Attempt to mount non-existant physical directory '{}'!",
-                pRealPath.string()
+                "{}: '{}' is not a directory!",
+                "VirtualFilesystem", pRealPath.string()
             );
         }
 
-        // Store the mount in last-in-first-out (LIFO) order - later mounts are
-        // tried first.
-        sMounts.emplace_back(std::move(pMountPoint), std::move(pRealPath));
+        sMounts.emplace_back(PhysicalMount { lMountPoint, pRealPath });
     }
 
-    void VirtualFilesystem::UnmountPhysicalDirectory (
-        const std::string&  pMountPoint
+    void VirtualFilesystem::MountArchive (
+        const std::string&  pMountPoint,
+        const fs::path&     pArchivePath
     )
     {
-        // Find the mount point in the `sMounts` map. Erase it if it exists.
-        sMounts.erase(
-            std::remove_if(
-                sMounts.begin(),
-                sMounts.end(),
-                [&] (const auto& pMount)
-                {
-                    return pMount.first == pMountPoint;
-                }
-            ),
-            sMounts.end()
-        );
+        std::string lMountPoint = NormalizePath(pMountPoint);
+        if (fs::exists(pArchivePath) == false)
+        {
+            ACE_THROW(
+                std::runtime_error,
+                "{}: Could not find archive file '{}'!",
+                "VirtualFilesystem", pArchivePath.string()
+            );
+        }
+
+        sMounts.emplace_back(ArchiveMount { lMountPoint, pArchivePath });
     }
 
-    std::unique_ptr<IVirtualFile> VirtualFilesystem::OpenLogicalFile (
+    std::unique_ptr<IVirtualFile> VirtualFilesystem::OpenFile (
         const std::string&  pLogicalPath
     )
     {
-        // Normalize the provided logical path.
-        std::string lLogicalPath = pLogicalPath;
-        std::ranges::replace(lLogicalPath, '\\', '/');
-        if (lLogicalPath.empty() == false && lLogicalPath.front() == '/')    
-            { lLogicalPath.erase(lLogicalPath.begin()); }
-        if (lLogicalPath.empty() == false && lLogicalPath.back() == '/')
-            { lLogicalPath.pop_back(); }
-        if (lLogicalPath.empty())
-        {
-            ACE_THROW(
-                std::invalid_argument,
-                "VirtualFilesystem: Attempt to open logical file with no filename provided!"
-            );
-        }
-
-        // Iterate over each mount in reverse order.
+        std::string lLogicalPath = NormalizePath(pLogicalPath);
         for (auto lIter = sMounts.rbegin(); lIter != sMounts.rend(); ++lIter)
         {
-            // Pull the mount point and associated directory from the list.
-            const auto& [lMountPoint, lRealPath] = *lIter;
-
-            // Check to see if `lLogicalPath` begins with `lMountPoint` + `/`.
-            if (
-                lLogicalPath.starts_with(lMountPoint) &&
-                (
-                    lLogicalPath.size() == lMountPoint.size() ||
-                    lLogicalPath[lMountPoint.size()] == '/'
-                )
-            )
+            if (auto lFile = AttemptOpen(*lIter, lLogicalPath))
             {
-                // Grab the remaining part of the logical path after the mount
-                // point. Remove any slashes from the front of that portion.
-                std::string lRemainder = lLogicalPath.substr(lMountPoint.size());
-                if (lRemainder.empty() == false && lRemainder.front() == '/')
-                {
-                    lRemainder.erase(lRemainder.begin());
-                }
-
-                // Use the modified remainder and the real path to resolve the
-                // actual full directory. If that path exists, and resolves to
-                // a regular file, open the file and return the handle.
-                fs::path lFullPath = lRealPath / lRemainder;
-                if (
-                    fs::exists(lFullPath) == true &&
-                    fs::is_regular_file(lFullPath) == true
-                )
-                {
-                    return std::make_unique<VirtualLocalFile>(lFullPath);
-                }
+                return lFile;
             }
         }
 
-        // File was not found in any of the mounts.
         return nullptr;
     }
 
-    std::vector<std::string> VirtualFilesystem::ListDirectory (
+    /* Private Methods ********************************************************/
+
+    std::string VirtualFilesystem::NormalizePath (
+        const std::string&  pPath
+    )
+    {
+        static const auto IS_SLASH = [] (const char& lChar)
+        {
+            return lChar == '/' || lChar == '\\';
+        };
+
+        auto lLeft = std::find_if_not(pPath.begin(), pPath.end(), IS_SLASH);
+        if (lLeft == pPath.end())
+        {
+            return "";
+        }
+
+        auto lRight = std::find_if_not(pPath.rbegin(),
+            std::make_reverse_iterator(lLeft), IS_SLASH).base();
+
+        std::string lPath { lLeft, lRight };
+        std::ranges::replace(lPath, '\\', '/');
+        return lPath;
+    }
+
+    std::unique_ptr<IVirtualFile> VirtualFilesystem::AttemptOpen (
+        const Mount&        pMount,
         const std::string&  pLogicalPath
     )
     {
-        // Normalize the provided logical path.
-        std::string lLogicalPath = pLogicalPath;
-        std::ranges::replace(lLogicalPath, '\\', '/');
-        if (lLogicalPath.empty() == false && lLogicalPath.front() == '/')    
-            { lLogicalPath.erase(lLogicalPath.begin()); }
-        if (lLogicalPath.empty() == false && lLogicalPath.back() == '/')
-            { lLogicalPath.pop_back(); }
-        if (lLogicalPath.empty())
-        {
-            ACE_THROW(
-                std::invalid_argument,
-                "VirtualFilesystem: Attempt to perform a directory listing with no path!"
-            );
-        }
-
-        // This container contains the folder's file contents.
-        std::vector<std::string> lFiles;
-
-        // Iterate over each mount in reverse order.
-        for (auto lIter = sMounts.rbegin(); lIter != sMounts.rend(); ++lIter)
-        {
-            // Pull the mount point and associated directory from the list.
-            const auto& [lMountPoint, lRealPath] = *lIter;
-
-            // Check to see if `lLogicalPath` begins with `lMountPoint` + `/`.
-            if (
-                lLogicalPath.starts_with(lMountPoint) &&
-                (
-                    lLogicalPath.size() == lMountPoint.size() ||
-                    lLogicalPath[lMountPoint.size()] == '/'
-                )
-            )
+        // Visit the mount union and seek out the file according to the mount
+        // type.
+        return std::visit(
+            [&] (const auto& pVisitedMount) -> std::unique_ptr<IVirtualFile>
             {
-                // Grab the remaining part of the logical path after the mount
-                // point. Remove any slashes from the front of that portion.
-                std::string lRemainder = lLogicalPath.substr(lMountPoint.size());
-                if (lRemainder.empty() == false && lRemainder.front() == '/')
+                // Get the mount point. Make sure the provided logical path
+                // begins with that substring.
+                const auto& lMountPoint = pVisitedMount.mMountPoint;
+                if (pLogicalPath.starts_with(lMountPoint) == false)
                 {
-                    lRemainder.erase(lRemainder.begin());
+                    return nullptr;
                 }
 
-                // Use the modified remainder and the real path to resolve the
-                // actual full directory. If that path exists, and resolves to
-                // a physical directory, then list its file contents.
-                fs::path lFullPath = lRealPath / lRemainder;
+                // Get the remaining subpath after the mount point.
+                std::string lSubpath = pLogicalPath.substr(lMountPoint.size());
                 if (
-                    fs::exists(lFullPath) == true &&
-                    fs::is_directory(lFullPath) == true
+                    lSubpath.empty() == false &&
+                    (
+                        lSubpath[0] == '/' ||
+                        lSubpath[0] == '\\'
+                    )
                 )
                 {
-                    for (const auto& lEntry : fs::directory_iterator { lFullPath })
-                    {
-                        if (lEntry.is_regular_file())
-                        {
-                            std::string lRelative = lMountPoint;
-                            if (lRemainder.empty() == false)
-                            {
-                                lRelative += '/' + lRemainder;
-                            }
-
-                            lRelative += '/' + lEntry.path().filename().string();
-                            lFiles.push_back(std::move(lRelative));
-                        }
-                    }
-
-                    // Once listing is done, break.
-                    break;
+                    lSubpath.erase(lSubpath.begin());
                 }
-            }
-        }
 
-        return lFiles;
+                // Depending on the mount structure's type, open the file.
+                if constexpr
+                    (std::is_same_v<decltype(pVisitedMount), const PhysicalMount&>)
+                {
+                    auto lRealPath = pVisitedMount.mRealPath / lSubpath;
+                    try
+                    {
+                        return fs::is_regular_file(lRealPath) ?
+                            std::make_unique<VirtualLocalFile>(lRealPath) :
+                            nullptr;
+                    }
+                    catch (...)
+                    {
+                        return nullptr;
+                    }
+                }
+                else if constexpr
+                    (std::is_same_v<decltype(pVisitedMount), const ArchiveMount&>)
+                {
+                    try
+                    {
+                        return std::make_unique<VirtualArchiveFile>(
+                            pVisitedMount.mArchivePath,
+                            lSubpath
+                        );
+                    }
+                    catch (std::exception& lEx)
+                    {
+                        std::printf("%s\n", lEx.what());
+                        return nullptr;
+                    }
+                }
+
+                return nullptr;
+            }, pMount
+        );
     }
 
 }
