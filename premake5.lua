@@ -57,13 +57,17 @@ workspace "Ace"
         targetdir   "./build/%{outputdir}/bin"
         objdir      "./build/%{outputdir}/obj/AceEngine"
         files       { "./engine/Ace/**.hpp", "./engine/Ace/**.cpp" }
-        includedirs { "./engine", table.unpack(external_includes) }
+        includedirs { 
+            "./engine", 
+            "./external/miniz",
+            table.unpack(external_includes) 
+        }
 
         libdirs {
 
         }
         links {
-
+            "miniz"
         }
         
         filter { "system:windows" }

@@ -31,6 +31,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 
 #define ACE_API
 #define ACE_TYPEID(pType) std::type_index(typeid(pType))
