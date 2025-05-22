@@ -50,13 +50,29 @@ namespace sandbox
         ace::AssetRegistry::RegisterAssetLoader<std::string>(
             std::make_shared<TextLoader>()
         );
-        if (
-            auto lAsset =
-                ace::AssetRegistry::Load<std::string>("my_test/cgpt.roadmap.md")
-        )
+
+        auto lFuture1 = ace::AssetRegistry::LoadAsync<std::string>("my_test/cgpt.roadmap.md");
+        auto lFuture2 = ace::AssetRegistry::LoadAsync<std::string>("my_test/code-style.md");
+
+        auto lFile2 = lFuture2.get();
+        if (lFile2.IsValid() == true)
         {
-            std::printf("%s\n", lAsset->c_str());
+            std::printf("%s\n", lFile2->c_str());
         }
+
+        auto lFile1 = lFuture1.get();
+        if (lFile1.IsValid() == true)
+        {
+            std::printf("%s\n", lFile1->c_str());
+        }
+
+        // if (
+        //     auto lAsset =
+        //         ace::AssetRegistry::Load<std::string>("my_test/cgpt.roadmap.md")
+        // )
+        // {
+        //     std::printf("%s\n", lAsset->c_str());
+        // }
 
         // if (auto lFile = ace::VFS::OpenFile("my_test/cgpt.roadmap.md"))
         // {

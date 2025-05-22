@@ -4,6 +4,7 @@
  */
 
 #pragma once
+#include <Ace/System/ThreadPool.hpp>
 #include <Ace/System/VirtualFilesystem.hpp>
 
 namespace ace
@@ -173,6 +174,8 @@ namespace ace
          * @brief   Attempts to load an asset of type `T` from the given logical
          *          path.
          * 
+         * @tparam  T               The type of asset being loaded.
+         * 
          * @param   pLogicalPath    The logical path to the asset's data.
          * 
          * @return  An `AssetHandle<T>` referencing the loaded asset if found;
@@ -276,6 +279,38 @@ namespace ace
 
             // No available asset loader claimed this asset.
             return AssetHandle<T> {};
+        }
+
+        /**
+         * @brief   Attempts to asynchronously load an asset of type `T` from 
+         *          the given logical path.
+         * 
+         * @tparam  T               The type of asset being loaded.
+         * 
+         * @param   pLogicalPath    The logical path to the asset's data.
+         * 
+         * @return  An `std::future` which will hold an `AssetHandle<T>`
+         *          containing the loaded asset's data if successful.
+         */
+        template <typename T>
+        static std::future<AssetHandle<T>> LoadAsync (
+            const std::string& pLogicalPath
+        )
+        {
+
+            // Upon the first call of this method, a thread pool will be
+            // created to handle all asynchronous asset loads.
+            static ThreadPool sThreadPool {};
+
+            // Enqueue a task which will call a synchronous `Load<T>`.
+            return sThreadPool.Enqueue(
+                [] (const std::string& pPath) -> AssetHandle<T>
+                {
+                    return AssetRegistry::Load<T>(pPath);
+                },
+                pLogicalPath
+            );
+
         }
 
     private:

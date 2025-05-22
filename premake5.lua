@@ -20,7 +20,7 @@ workspace "Ace"
 
     -- Language and Runtime Settings
     language        "C++"
-    cppdialect      "C++20"
+    cppdialect      "C++23"
     architecture    "x64"
     staticruntime   "On"
     startproject    "Sandbox"

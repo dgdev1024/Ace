@@ -12,6 +12,7 @@
 - Member Variables: `mPascalCase`
 - Local Variables: `lPascalCase`
 - Static Members/Variables: `sPascalCase`
+- Non-range-based `for` loop initializers: single lower-case letter (eg. `i`, `j`)
 
 - Augmented Standard Namespace: `astd`
 - Everything therein: `snake_case`
@@ -29,4 +30,16 @@ void functionWithMultipleArgs (
     const std::string& pName,
     const std::uint8_t& pAge
 );
+```
+
+## Non-Range-Based For Loops
+
+```c++
+for (std::size_t i = 0; i < 10; ++i)
+{
+    for (std::size_t j = 0; j < 10; ++i)
+    {
+        
+    }
+}
 ```
