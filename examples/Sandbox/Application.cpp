@@ -46,45 +46,40 @@ namespace sandbox
     ):
         ace::IApplication   { pSpec }
     {
-        ace::VFS::MountArchive("my_test", "./notes/test.zip");
-        ace::AssetRegistry::RegisterAssetLoader<std::string>(
-            std::make_shared<TextLoader>()
+        ace::Logger::RegisterSink(
+            std::make_shared<ace::LoggerConsoleSink>()
         );
 
-        auto lFuture1 = ace::AssetRegistry::LoadAsync<std::string>("my_test/cgpt.roadmap.md");
-        auto lFuture2 = ace::AssetRegistry::LoadAsync<std::string>("my_test/code-style.md");
+        auto lSubscriptionID = ace::EventBus::Subscribe<ace::FileChangedEvent>(
+            [] (const ace::FileChangedEvent& pEvent) -> bool
+            {
+                switch (pEvent.mMethod)
+                {
+                    case ace::FileChangeMethod::Created:
+                        ACE_LOG_INFO("Created file '{}'.", pEvent.mPath);
+                        break;
+                    case ace::FileChangeMethod::Updated:
+                        ACE_LOG_INFO("Updated file '{}'.", pEvent.mPath);
+                        break;
+                    case ace::FileChangeMethod::Deleted:
+                        ACE_LOG_INFO("Deleted file '{}'.", pEvent.mPath);
+                        break;
+                }
 
-        auto lFile2 = lFuture2.get();
-        if (lFile2.IsValid() == true)
+                return true;
+            }
+        );
+
+        ace::FileWatcher lWatcher;
+        lWatcher.Start({ "./notes" });
+
+        for (int i = 0; i < 30; ++i)
         {
-            std::printf("%s\n", lFile2->c_str());
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            ace::EventBus::Dispatch();
         }
 
-        auto lFile1 = lFuture1.get();
-        if (lFile1.IsValid() == true)
-        {
-            std::printf("%s\n", lFile1->c_str());
-        }
-
-        // if (
-        //     auto lAsset =
-        //         ace::AssetRegistry::Load<std::string>("my_test/cgpt.roadmap.md")
-        // )
-        // {
-        //     std::printf("%s\n", lAsset->c_str());
-        // }
-
-        // if (auto lFile = ace::VFS::OpenFile("my_test/cgpt.roadmap.md"))
-        // {
-        //     astd::byte_buffer lBuffer(lFile->GetSize());
-        //     lFile->Read(lBuffer.data(), lBuffer.size());
-        //     for (const auto& lByte : lBuffer)
-        //     {
-        //         std::printf("%c", lByte);
-        //     }
-
-        //     std::printf("\n");
-        // }
+        lWatcher.Stop();
     }
 
     Application::~Application ()
