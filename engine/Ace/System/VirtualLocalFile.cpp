@@ -48,7 +48,7 @@ namespace ace
         // Read the requested number of bytes into the buffer.
         mFileStream.read(
             reinterpret_cast<char*>(pBuffer),
-            pBytes
+            (pBytes == astd::npos) ? mSize : pBytes
         );
 
         // Return the number of bytes read.

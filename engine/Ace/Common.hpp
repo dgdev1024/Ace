@@ -48,9 +48,14 @@ static_assert(sizeof(std::size_t) == sizeof(std::uint64_t),
 
 namespace astd
 {
+
+    constexpr std::size_t npos = static_cast<std::size_t>(-1);
+
                                         using byte_buffer = std::vector<std::uint8_t>;
     template <typename T>               using raw_ptr = T*;
+    template <typename T>               using raw_ref = T&;
     template <typename T, typename U>   using vector_map = std::vector<std::pair<T, U>>;
+    template <typename T>               using type_map = std::unordered_map<std::type_index, T>;
 
     template <typename... Ts>
     struct overloaded : Ts... { using Ts::operator()...; };

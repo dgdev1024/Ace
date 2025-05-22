@@ -13,6 +13,9 @@
 - Local Variables: `lPascalCase`
 - Static Members/Variables: `sPascalCase`
 
+- Augmented Standard Namespace: `astd`
+- Everything therein: `snake_case`
+
 ## Functions
 
 ```c++

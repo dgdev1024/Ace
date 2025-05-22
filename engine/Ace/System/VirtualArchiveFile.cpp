@@ -113,7 +113,10 @@ namespace ace
         }
 
         // Determine the number of bytes which need to be read.
-        std::size_t lBytesToRead = std::min(pBytes, mSize - mPosition);
+        std::size_t lBytesToRead = std::min(
+            (pBytes == astd::npos) ? mSize : pBytes, 
+            mSize - mPosition
+        );
         std::memcpy(pBuffer, mBuffer.data() + mPosition, lBytesToRead);
 
         // Move the read cursor by the number of bytes read, then return the
