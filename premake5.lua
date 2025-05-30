@@ -85,6 +85,23 @@ workspace "Ace"
             defines         { "ACE_LINUX" }
         filter {}
 
+    -- Project: `MathsTesting` - Ace Engine Mathematics Library Testing
+    project "MathsTesting"
+        kind        "ConsoleApp"
+        location    "./build/%{outputdir}/MathsTesting"
+        targetdir   "./build/%{outputdir}/bin"
+        objdir      "./build/%{outputdir}/obj/MathsTesting"
+        files       { "./examples/MathsTesting/**.hpp", "./examples/MathsTesting/**.cpp" }
+        includedirs { "./engine", "./examples", table.unpack(external_includes) }
+        links       { "AceEngine", table.unpack(external_links) }
+        
+        filter { "system:windows" }
+            systemversion   "latest"
+        filter { "system:linux" }
+            pic             "On"
+        filter {}
+        
+
     -- Project: `Sandbox` - Ace Engine Sandbox Application
     project "Sandbox"
         kind        "ConsoleApp"
