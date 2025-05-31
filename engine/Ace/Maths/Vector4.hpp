@@ -53,7 +53,9 @@ namespace ace
             mY  { pY },
             mZ  { pZ },
             mW  { pW }
-        {}
+        {
+            
+        }
 
     public:
         

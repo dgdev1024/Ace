@@ -5,6 +5,7 @@
 #include <MathsTesting/TestVector2.hpp>
 #include <MathsTesting/TestVector3.hpp>
 #include <MathsTesting/TestVector4.hpp>
+#include <MathsTesting/TestMatrix4.hpp>
 
 #define FN(F) { #F, F }
 
@@ -27,7 +28,16 @@ static const std::unordered_map<std::string, std::function<bool()>>
         FN(AceVector4::TestLengthNormalizeDistance),
         FN(AceVector4::TestProjection),
         FN(AceVector4::TestReflection),
-        FN(AceVector4::TestRefraction)
+        FN(AceVector4::TestRefraction),
+        FN(AceMatrix4::TestBasic),
+        FN(AceMatrix4::TestAccessors),
+        FN(AceMatrix4::TestAddSubtract),
+        FN(AceMatrix4::TestMatrixMultiply),
+        FN(AceMatrix4::TestMatrixVectorMultiply),
+        FN(AceMatrix4::TestMatrixScalarMultiplyDivide),
+        FN(AceMatrix4::TestDeterminant),
+        FN(AceMatrix4::TestInverse),
+        FN(AceMatrix4::TestTranspose)
     };
 
 int main ()
