@@ -1,6 +1,6 @@
 /**
- * @file    Ace/Maths/Vector3.hpp
- * @brief   Contains a 3D euclidian vector structure.
+ * @file    Ace/Maths/Vector2.hpp
+ * @brief   Contains a 2D euclidian vector structure.
  */
 
 #pragma once
@@ -10,16 +10,15 @@ namespace ace
 {
 
     /**
-     * @brief   A 3D euclidian vector with X, Y and Z components.
+     * @brief   A 2D euclidian vector with X and Y components.
      * 
      * @tparam  T   The numeric types of the vector's components.
      */
     template <Numeric T>
-    struct Vector3
+    struct Vector2
     {
         T mX;               ///< @brief The vector's X component.
         T mY;               ///< @brief The vector's Y component.
-        T mZ;               ///< @brief The vector's Z component.
 
     public:
 
@@ -27,10 +26,9 @@ namespace ace
          * @brief   The default constructor initializes the vector's components
          *          to zero.
          */
-        constexpr Vector3<T> () :
+        constexpr Vector2<T> () :
             mX      { ZERO<T> },
-            mY      { ZERO<T> },
-            mZ      { ZERO<T> }
+            mY      { ZERO<T> }
         {}
 
         /**
@@ -38,16 +36,13 @@ namespace ace
          * 
          * @param   pX  The vector's X component.
          * @param   pY  The vector's Y component.
-         * @param   pZ  The vecotr's Z component.
          */
-        constexpr Vector3<T> (
+        constexpr Vector2<T> (
             const T pX,
-            const T pY,
-            const T pZ
+            const T pY
         ) :
             mX  { pX },
-            mY  { pY },
-            mZ  { pZ }
+            mY  { pY }
         {}
 
     public:
@@ -57,9 +52,9 @@ namespace ace
          * 
          * @return  The constructed vector.
          */
-        static constexpr Vector3<T> Zero () noexcept
+        static constexpr Vector2<T> Zero () noexcept
         {
-            return Vector3<T> { ZERO<T>, ZERO<T>, ZERO<T> };
+            return Vector2<T> { ZERO<T>, ZERO<T> };
         }
 
         /**
@@ -67,9 +62,9 @@ namespace ace
          * 
          * @return  The constructed vector.
          */
-        static constexpr Vector3<T> One () noexcept
+        static constexpr Vector2<T> One () noexcept
         {
-            return Vector3<T> { ONE<T>, ONE<T>, ONE<T> };
+            return Vector2<T> { ONE<T>, ONE<T> };
         }
 
         /**
@@ -78,9 +73,9 @@ namespace ace
          * 
          * @return  The constructed vector.
          */
-        static constexpr Vector3<T> Up () noexcept
+        static constexpr Vector2<T> Up () noexcept
         {
-            return Vector3<T> { ZERO<T>, ONE<T>, ZERO<T> };
+            return Vector2<T> { ZERO<T>, ONE<T> };
         }
 
         /**
@@ -89,20 +84,9 @@ namespace ace
          * 
          * @return  The constructed vector.
          */
-        static constexpr Vector3<T> Right () noexcept
+        static constexpr Vector2<T> Right () noexcept
         {
-            return Vector3<T> { ONE<T>, ZERO<T>, ZERO<T> };
-        }
-
-        /**
-         * @brief   Constructs a front-facing vector, in which the Z
-         *          component is set to one.
-         * 
-         * @return  The constructed vector.
-         */
-        static constexpr Vector3<T> Front () noexcept
-        {
-            return Vector3<T> { ZERO<T>, ZERO<T>, ONE<T> };
+            return Vector2<T> { ONE<T>, ZERO<T> };
         }
 
     public:
@@ -116,13 +100,12 @@ namespace ace
          * @return  `true` if the vectors are equal; `false` otherwise.
          */
         constexpr bool operator== (
-            const Vector3<T>&   pOther
+            const Vector2<T>&   pOther
         ) const noexcept
         {
             return (
                 mX == pOther.mX &&
-                mY == pOther.mY &&
-                mZ == pOther.mZ
+                mY == pOther.mY
             );
         }
 
@@ -131,9 +114,9 @@ namespace ace
          * 
          * @return  A vector with the negated components.
          */
-        constexpr Vector3<T> operator- () const noexcept
+        constexpr Vector2<T> operator- () const noexcept
         {
-            return Vector3<T> { -mX, -mY, -mZ };
+            return Vector2<T> { -mX, -mY };
         }
 
         /**
@@ -144,13 +127,12 @@ namespace ace
          * 
          * @return  This vector.
          */
-        constexpr Vector3<T>& operator+= (
+        constexpr Vector2<T>& operator+= (
             const T pScalar
         ) noexcept
         {
             mX += pScalar;
             mY += pScalar;
-            mZ += pScalar;
             return *this;
         }
 
@@ -163,8 +145,8 @@ namespace ace
          * 
          * @return  A vector with the component sums.
          */
-        friend constexpr Vector3<T> operator+ (
-            Vector3<T>      pLeft,
+        friend constexpr Vector2<T> operator+ (
+            Vector2<T>      pLeft,
             const T         pRight
         ) noexcept
         {
@@ -180,9 +162,9 @@ namespace ace
          * 
          * @return  A vector with the component sums.
          */
-        friend constexpr Vector3<T> operator+ (
+        friend constexpr Vector2<T> operator+ (
             const T         pLeft,
-            Vector3<T>      pRight
+            Vector2<T>      pRight
         ) noexcept
         {
             return pRight += pLeft;
@@ -196,13 +178,12 @@ namespace ace
          * 
          * @return  This vector.
          */
-        constexpr Vector3<T>& operator-= (
+        constexpr Vector2<T>& operator-= (
             const T pScalar
         ) noexcept
         {
             mX -= pScalar;
             mY -= pScalar;
-            mZ -= pScalar;
             return *this;
         }
 
@@ -215,8 +196,8 @@ namespace ace
          * 
          * @return  A vector with the component differences.
          */
-        friend constexpr Vector3<T> operator- (
-            Vector3<T>      pLeft,
+        friend constexpr Vector2<T> operator- (
+            Vector2<T>      pLeft,
             const T         pRight
         ) noexcept
         {
@@ -231,13 +212,12 @@ namespace ace
          * 
          * @return  This vector.
          */
-        constexpr Vector3<T>& operator*= (
+        constexpr Vector2<T>& operator*= (
             const T pScalar
         ) noexcept
         {
             mX *= pScalar;
             mY *= pScalar;
-            mZ *= pScalar;
             return *this;
         }
 
@@ -250,8 +230,8 @@ namespace ace
          * 
          * @return  A vector with the component products.
          */
-        friend constexpr Vector3<T> operator* (
-            Vector3<T>      pLeft,
+        friend constexpr Vector2<T> operator* (
+            Vector2<T>      pLeft,
             const T         pRight
         ) noexcept
         {
@@ -267,9 +247,9 @@ namespace ace
          * 
          * @return  A vector with the component products.
          */
-        friend constexpr Vector3<T> operator* (
+        friend constexpr Vector2<T> operator* (
             const T         pLeft,
-            Vector3<T>      pRight
+            Vector2<T>      pRight
         ) noexcept
         {
             return pRight *= pLeft;
@@ -283,7 +263,7 @@ namespace ace
          * 
          * @return  This vector.
          */
-        constexpr Vector3<T>& operator/= (
+        constexpr Vector2<T>& operator/= (
             const T pScalar
         ) noexcept
         {
@@ -291,7 +271,6 @@ namespace ace
 
             mX /= pScalar;
             mY /= pScalar;
-            mZ /= pScalar;
             return *this;
         }
 
@@ -304,8 +283,8 @@ namespace ace
          * 
          * @return  A vector with the component quotients.
          */
-        friend constexpr Vector3<T> operator/ (
-            Vector3<T>      pLeft,
+        friend constexpr Vector2<T> operator/ (
+            Vector2<T>      pLeft,
             const T         pRight
         ) noexcept
         {
@@ -320,13 +299,12 @@ namespace ace
          * 
          * @return  This vector.
          */
-        constexpr Vector3<T>& operator+= (
-            const Vector3<T>&   pOther
+        constexpr Vector2<T>& operator+= (
+            const Vector2<T>&   pOther
         ) noexcept
         {
             mX += pOther.mX;
             mY += pOther.mY;
-            mZ += pOther.mZ;
             return *this;
         }
 
@@ -338,9 +316,9 @@ namespace ace
          * 
          * @return  A vector with the component sums.
          */
-        friend constexpr Vector3<T> operator+ (
-            Vector3<T>          pLeft,
-            const Vector3<T>&   pRight
+        friend constexpr Vector2<T> operator+ (
+            Vector2<T>          pLeft,
+            const Vector2<T>&   pRight
         ) noexcept
         {
             return pLeft += pRight;
@@ -354,13 +332,12 @@ namespace ace
          * 
          * @return  This vector.
          */
-        constexpr Vector3<T>& operator-= (
-            const Vector3<T>&   pOther
+        constexpr Vector2<T>& operator-= (
+            const Vector2<T>&   pOther
         ) noexcept
         {
             mX -= pOther.mX;
             mY -= pOther.mY;
-            mZ -= pOther.mZ;
             return *this;
         }
 
@@ -372,9 +349,9 @@ namespace ace
          * 
          * @return  A vector with the component differences.
          */
-        friend constexpr Vector3<T> operator- (
-            Vector3<T>          pLeft,
-            const Vector3<T>&   pRight
+        friend constexpr Vector2<T> operator- (
+            Vector2<T>          pLeft,
+            const Vector2<T>&   pRight
         ) noexcept
         {
             return pLeft -= pRight;
@@ -388,13 +365,12 @@ namespace ace
          * 
          * @return  This vector.
          */
-        constexpr Vector3<T>& operator*= (
-            const Vector3<T>&   pOther
+        constexpr Vector2<T>& operator*= (
+            const Vector2<T>&   pOther
         ) noexcept
         {
             mX *= pOther.mX;
             mY *= pOther.mY;
-            mZ *= pOther.mZ;
             return *this;
         }
 
@@ -406,9 +382,9 @@ namespace ace
          * 
          * @return  A vector with the component products.
          */
-        friend constexpr Vector3<T> operator* (
-            Vector3<T>          pLeft,
-            const Vector3<T>&   pRight
+        friend constexpr Vector2<T> operator* (
+            Vector2<T>          pLeft,
+            const Vector2<T>&   pRight
         ) noexcept
         {
             return pLeft *= pRight;
@@ -423,7 +399,7 @@ namespace ace
          */
         constexpr T LengthSquared () const noexcept
         {
-            return (mX * mX) + (mY * mY) + (mZ * mZ);
+            return (mX * mX) + (mY * mY);
         }
 
         /**
@@ -445,32 +421,12 @@ namespace ace
          * @return  The dot product of the two vectors.
          */
         constexpr T Dot (
-            const Vector3<T>&   pOther
+            const Vector2<T>&   pOther
         ) const noexcept
         {
             return 
                 (mX * pOther.mX) +
-                (mY * pOther.mY) +
-                (mZ * pOther.mZ);
-        }
-
-        /**
-         * @brief   Calculates the cross product of this vector and the given
-         *          vector.
-         * 
-         * @param   pOther  The other vector.
-         * 
-         * @return  The cross product of the two vectors.
-         */
-        constexpr Vector3<T> Cross (
-            const Vector3<T>&   pOther
-        ) const noexcept
-        {
-            return Vector3<T> {
-                (mY * pOther.mZ) - (mZ * pOther.mY),
-                (mZ * pOther.mX) - (mX * pOther.mZ),
-                (mX * pOther.mY) - (mY * pOther.mX)
-            };
+                (mY * pOther.mY);
         }
 
         /**
@@ -479,7 +435,7 @@ namespace ace
          * 
          * @return  This vector.
          */
-        constexpr Vector3<T>& Normalize () noexcept
+        constexpr Vector2<T>& Normalize () noexcept
         {
             T lLength = Length();
             
@@ -487,7 +443,6 @@ namespace ace
             {
                 mX /= lLength;
                 mY /= lLength;
-                mZ /= lLength;
             }
 
             return *this;
@@ -499,9 +454,9 @@ namespace ace
          * 
          * @return  The normalized form of this vector.
          */
-        constexpr Vector3<T> Normalized () const noexcept
+        constexpr Vector2<T> Normalized () const noexcept
         {
-            Vector3<T> lVector = *this;
+            Vector2<T> lVector = *this;
             return lVector.Normalize();
         }
 
@@ -514,7 +469,7 @@ namespace ace
          * @return  The distance between the two vectors.
          */
         constexpr T Distance (
-            const Vector3<T>&   pOther
+            const Vector2<T>&   pOther
         ) const noexcept
         {
             return ((*this) - pOther).Length();
@@ -531,14 +486,14 @@ namespace ace
          * 
          * @return  The calculated projection of this vector.
          */
-        constexpr Vector3<T> Project (
-            const Vector3<T>&   pOther
+        constexpr Vector2<T> Project (
+            const Vector2<T>&   pOther
         ) const noexcept
         {
             const T lLengthSquared = pOther.LengthSquared();
             return (lLengthSquared > ZERO<T>) ?
                 pOther * (Dot(pOther) / lLengthSquared) :
-                Vector3<T>::Zero();
+                Vector2<T>::Zero();
         }
 
         /**
@@ -550,8 +505,8 @@ namespace ace
          * 
          * @return  The calculated reflection vector.
          */
-        constexpr Vector3<T> Reflect (
-            const Vector3<T>&   pNormal
+        constexpr Vector2<T> Reflect (
+            const Vector2<T>&   pNormal
         ) const noexcept
         {
             return *this - (TWO<T> * Dot(pNormal)) * pNormal;
@@ -559,10 +514,10 @@ namespace ace
 
         /**
          * @brief   Calculates the refraction (bend) of a ray represented by
-         *          this vector as it passes through a plane represented by the
+         *          this vector as it passes through a line represented by the
          *          given vector.
          * 
-         * @param   pNormal     The vector representing the plane through which
+         * @param   pNormal     The vector representing the line through which
          *                      this vector would be bent. This should be a 
          *                      normalized unit vector.
          * @param   pRatio      The ratio of the refractive indices of the
@@ -572,8 +527,8 @@ namespace ace
          * @return  The calculated refraction vector (or reflection vector in
          *          case of a total internal reflection).
          */
-        constexpr Vector3<T> Refract (
-            const Vector3<T>&   pNormal,
+        constexpr Vector2<T> Refract (
+            const Vector2<T>&   pNormal,
             const T             pRatio
         ) const noexcept
         {
@@ -607,8 +562,8 @@ namespace ace
      */
     template <Numeric T>
     inline constexpr T Dot (
-        const Vector3<T>&   pLeft,
-        const Vector3<T>&   pRight
+        const Vector2<T>&   pLeft,
+        const Vector2<T>&   pRight
     ) noexcept
     {
         return pLeft.Dot(pRight);
@@ -625,9 +580,9 @@ namespace ace
      * @return  The cross product of the two vectors.
      */
     template <Numeric T>
-    inline constexpr Vector3<T> Cross (
-        const Vector3<T>&   pLeft,
-        const Vector3<T>&   pRight
+    inline constexpr Vector2<T> Cross (
+        const Vector2<T>&   pLeft,
+        const Vector2<T>&   pRight
     ) noexcept
     {
         return pLeft.Cross(pRight);
@@ -645,8 +600,8 @@ namespace ace
      */
     template <Numeric T>
     inline constexpr T Distance (
-        const Vector3<T>&   pStart,
-        const Vector3<T>&   pEnd
+        const Vector2<T>&   pStart,
+        const Vector2<T>&   pEnd
     ) noexcept
     {
         return pStart.Distance(pEnd);
@@ -663,9 +618,9 @@ namespace ace
      * @return  The calculated projection of projector onto projectee.
      */
     template <Numeric T>
-    inline constexpr Vector3<T> Project (
-        const Vector3<T>&   pProjector,
-        const Vector3<T>&   pProjectee
+    inline constexpr Vector2<T> Project (
+        const Vector2<T>&   pProjector,
+        const Vector2<T>&   pProjectee
     ) noexcept
     {
         return pProjector.Project(pProjectee);
@@ -684,9 +639,9 @@ namespace ace
      * @return  The calculated reflection vector.
      */
     template <Numeric T>
-    inline constexpr Vector3<T> Reflect (
-        const Vector3<T>&   pStart,
-        const Vector3<T>&   pNormal
+    inline constexpr Vector2<T> Reflect (
+        const Vector2<T>&   pStart,
+        const Vector2<T>&   pNormal
     ) noexcept
     {
         return pStart.Reflect(pNormal);
@@ -694,16 +649,16 @@ namespace ace
 
     /**
      * @brief   Calculates the refraction (bend) of a given ray vector as
-     *          it passes through a plane represented by a given normal
+     *          it passes through a line represented by a given normal
      *          vector.
      * 
      * @tparam  T           The numeric type of the vectors' components and the
      *                      refraction ratio.
      * 
      * @param   pRay        The vector representing the ray passing through
-     *                      the plane. This should be a normalized unit
+     *                      the line. This should be a normalized unit
      *                      vector.
-     * @param   pNormal     The vector representing the plane through which
+     * @param   pNormal     The vector representing the line through which
      *                      the ray vector would be bent. This should be a 
      *                      normalized unit vector.
      * @param   pRatio      The ratio of the refractive indices of the
@@ -714,9 +669,9 @@ namespace ace
      *          case of a total internal reflection).
      */
     template <Numeric T>
-    inline constexpr Vector3<T> Refract (
-        const Vector3<T>&   pRay,
-        const Vector3<T>&   pNormal,
+    inline constexpr Vector2<T> Refract (
+        const Vector2<T>&   pRay,
+        const Vector2<T>&   pNormal,
         const T             pRatio
     ) noexcept
     {
@@ -734,20 +689,19 @@ namespace ace
      */
     template <typename T>
     inline constexpr bool EpsilonEqual (
-        const Vector3<T>&   pFirst,
-        const Vector3<T>&   pSecond
+        const Vector2<T>&   pFirst,
+        const Vector2<T>&   pSecond
     ) noexcept
     {
         return
             EpsilonEqual<T>(pFirst.mX, pSecond.mX) &&
-            EpsilonEqual<T>(pFirst.mY, pSecond.mY) &&
-            EpsilonEqual<T>(pFirst.mZ, pSecond.mZ);
+            EpsilonEqual<T>(pFirst.mY, pSecond.mY);
     }
 
-    using Vector3f  = Vector3<float>;
-    using Vector3d  = Vector3<double>;
-    using Vector3i  = Vector3<std::int32_t>;
-    using Vector3u  = Vector3<std::uint32_t>;
-    using Vector3b  = Vector3<bool>;
+    using Vector2f  = Vector2<float>;
+    using Vector2d  = Vector2<double>;
+    using Vector2i  = Vector2<std::int32_t>;
+    using Vector2u  = Vector2<std::uint32_t>;
+    using Vector2b  = Vector2<bool>;
 
 }

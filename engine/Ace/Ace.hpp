@@ -13,4 +13,6 @@
 #include <Ace/System/LoggerFileSink.hpp>
 #include <Ace/System/LoggerRenderSink.hpp>
 
+#include <Ace/Maths/Vector2.hpp>
 #include <Ace/Maths/Vector3.hpp>
+#include <Ace/Maths/Vector4.hpp>
