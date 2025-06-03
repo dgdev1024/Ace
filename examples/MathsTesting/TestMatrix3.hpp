@@ -1,11 +1,11 @@
 /**
- * @file    MathsTesting/TestMatrix4.hpp
+ * @file    MathsTesting/TestMatrix3.hpp
  */
 
 #pragma once
-#include <Ace/Maths/Matrix4.hpp>
+#include <Ace/Maths/Matrix3.hpp>
 
-namespace AceMatrix4
+namespace AceMatrix3
 {
     bool TestBasic ();
     bool TestAccessors ();
@@ -16,5 +16,4 @@ namespace AceMatrix4
     bool TestDeterminant ();
     bool TestInverse ();
     bool TestTranspose ();
-    bool TestNormalMatrix ();
 }

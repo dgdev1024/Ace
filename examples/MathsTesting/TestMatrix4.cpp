@@ -27,6 +27,11 @@ namespace AceMatrix4
         0.0f, 3.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 4.0f, 0.0f,
         0.0f, 0.0f, 0.0f, 5.0f
+    }, e {
+        54.0f, 85.0f, 3.0f, 66.0f,
+        40.0f, 61.0f, 28.0f, 68.0f,
+        8.0f, 39.0f, 66.0f, 50.0f,
+        75.0f, 54.0f, 16.0f, 26.0f
     };
 
     bool TestBasic ()
@@ -101,6 +106,7 @@ namespace AceMatrix4
         ace::Vector4f lExpectedColumnResult {
             90.0f, 100.0f, 110.0f, 120.0f
         };
+
         ACE_EXPECT(lColumnResult == lExpectedColumnResult,
             "Column-vector multiplication failed.");
 
@@ -218,6 +224,67 @@ namespace AceMatrix4
         ace::Matrix4f lZeroTranspose = ace::Matrix4f::Zero().Transpose();
         ACE_EXPECT(lZeroTranspose == ace::Matrix4f::Zero(),
             "Transpose of a zero matrix should be the zero matrix itself.");
+
+        return true;
+    }
+
+    bool TestNormalMatrix ()
+    {
+        static constexpr float PI = 3.14159265f;
+
+        {
+            ace::Matrix4f lScale {
+                2, 0, 0, 0,
+                0, 3, 0, 0,
+                0, 0, 4, 0,
+                0, 0, 0, 1
+            };
+
+            ace::Matrix3f lNormalMatrix = lScale.NormalMatrix();
+            ace::Matrix3f lExpected {
+                0.5f, 0, 0,
+                0, 1.0f / 3.0f, 0,
+                0, 0, 0.25f
+            };
+
+            ACE_EXPECT(lNormalMatrix == lExpected,
+                "Scaling - Normal matrix test failed.");
+
+            ace::Vector3f lNormal { 1.0f, 0.0f, 0.0f };
+            ace::Vector3f lOut = lNormalMatrix * lNormal;
+            ace::Vector3f lExpectedOut { 0.5f, 0.0f, 0.0f };
+
+            ACE_EXPECT(lOut == lExpectedOut,
+                "Scaling - Normal transformation test failed.");
+        }
+
+        {
+            float lCos = cosf(PI / 2.0f);
+            float lSin = sinf(PI / 2.0f);
+            
+            ace::Matrix4f lRotationZ {
+                lCos, lSin, 0, 0,
+                -lSin, lCos, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1
+            };
+            ace::Matrix3f lNormalMatrix = lRotationZ.NormalMatrix();
+            ace::Matrix3f lExpected {
+                lCos, -lSin, 0,
+                lSin, lCos, 0,
+                0, 0, 1
+            };
+
+            ACE_EXPECT(lNormalMatrix == lExpected,
+                "Rotation - Normal matrix test failed.");
+
+            ace::Vector3f lNormal { 1.0f, 0.0f, 0.0f };
+            ace::Vector3f lOut = lNormalMatrix * lNormal;
+            ace::Vector3f lExpectedOut { 0.0f, -1.0f, 0.0f };
+            
+            ACE_EXPECT(ace::EpsilonEqual(lOut, lExpectedOut),
+                "Rotation - Normal transformation test failed.");
+        }
 
         return true;
     }

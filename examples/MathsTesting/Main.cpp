@@ -5,6 +5,8 @@
 #include <MathsTesting/TestVector2.hpp>
 #include <MathsTesting/TestVector3.hpp>
 #include <MathsTesting/TestVector4.hpp>
+#include <MathsTesting/TestMatrix2.hpp>
+#include <MathsTesting/TestMatrix3.hpp>
 #include <MathsTesting/TestMatrix4.hpp>
 
 #define FN(F) { #F, F }
@@ -29,6 +31,24 @@ static const std::unordered_map<std::string, std::function<bool()>>
         FN(AceVector4::TestProjection),
         FN(AceVector4::TestReflection),
         FN(AceVector4::TestRefraction),
+        FN(AceMatrix2::TestBasic),
+        FN(AceMatrix2::TestAccessors),
+        FN(AceMatrix2::TestAddSubtract),
+        FN(AceMatrix2::TestMatrixMultiply),
+        FN(AceMatrix2::TestMatrixVectorMultiply),
+        FN(AceMatrix2::TestMatrixScalarMultiplyDivide),
+        FN(AceMatrix2::TestDeterminant),
+        FN(AceMatrix2::TestInverse),
+        FN(AceMatrix2::TestTranspose),
+        FN(AceMatrix3::TestBasic),
+        FN(AceMatrix3::TestAccessors),
+        FN(AceMatrix3::TestAddSubtract),
+        FN(AceMatrix3::TestMatrixMultiply),
+        FN(AceMatrix3::TestMatrixVectorMultiply),
+        FN(AceMatrix3::TestMatrixScalarMultiplyDivide),
+        FN(AceMatrix3::TestDeterminant),
+        FN(AceMatrix3::TestInverse),
+        FN(AceMatrix3::TestTranspose),
         FN(AceMatrix4::TestBasic),
         FN(AceMatrix4::TestAccessors),
         FN(AceMatrix4::TestAddSubtract),
@@ -37,7 +57,8 @@ static const std::unordered_map<std::string, std::function<bool()>>
         FN(AceMatrix4::TestMatrixScalarMultiplyDivide),
         FN(AceMatrix4::TestDeterminant),
         FN(AceMatrix4::TestInverse),
-        FN(AceMatrix4::TestTranspose)
+        FN(AceMatrix4::TestTranspose),
+        FN(AceMatrix4::TestNormalMatrix)
     };
 
 int main ()

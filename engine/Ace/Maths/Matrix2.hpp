@@ -1,24 +1,23 @@
 /**
- * @file    Ace/Maths/Matrix4.hpp
+ * @file    Ace/Maths/Matrix2.hpp
  */
 
 #pragma once
-#include <Ace/Maths/Matrix3.hpp>
-#include <Ace/Maths/Vector4.hpp>
+#include <Ace/Maths/Vector2.hpp>
 
 namespace ace
 {
 
     /**
-     * @brief   A 4x4 matrix with elements laid out in column-major order.
+     * @brief   A 3x3 matrix with elements laid out in column-major order.
      * 
      * @tparam  T   The numeric types of the matrix's elements.
      */
     template <Numeric T>
-    struct Matrix4
+    struct Matrix2
     {
     public:
-        static constexpr std::size_t SIZE = 4;              ///< @brief The size of the matrix, going across and down, in elements.
+        static constexpr std::size_t SIZE = 2;              ///< @brief The size of the matrix, going across and down, in elements.
         static constexpr std::size_t COUNT = SIZE * SIZE;   ///< @brief The number of elements in the matrix.
     
     public:
@@ -29,12 +28,10 @@ namespace ace
         /**
          * @brief   The default constructor creates an identity matrix.
          */
-        constexpr Matrix4<T> () noexcept :
+        constexpr Matrix2<T> () noexcept :
             mI {
-                ONE<T>,  ZERO<T>, ZERO<T>, ZERO<T>,
-                ZERO<T>, ONE<T>,  ZERO<T>, ZERO<T>,
-                ZERO<T>, ZERO<T>, ONE<T>,  ZERO<T>,
-                ZERO<T>, ZERO<T>, ZERO<T>, ONE<T>
+                ONE<T>,  ZERO<T>,
+                ZERO<T>, ONE<T>
             }
         {}
 
@@ -44,7 +41,7 @@ namespace ace
          * @param   pI  The array of the matrix's elements, laid out in
          *              column-major order.
          */
-        constexpr Matrix4<T> (
+        constexpr Matrix2<T> (
             const std::array<T, COUNT>& pI
         ) noexcept :
             mI  { pI }
@@ -56,7 +53,7 @@ namespace ace
          * @param   pI  The initializer list containing some or all of the
          *              matrix's elements, laid out in column-major order.
          */
-        constexpr Matrix4<T> (
+        constexpr Matrix2<T> (
             const std::initializer_list<T>& pI
         ) noexcept
         {
@@ -70,9 +67,9 @@ namespace ace
          * 
          * @return  The identity matrix.
          */
-        static constexpr Matrix4<T> Identity () noexcept
+        static constexpr Matrix2<T> Identity () noexcept
         {
-            return Matrix4<T> {};
+            return Matrix2<T> {};
         }
 
         /**
@@ -80,13 +77,11 @@ namespace ace
          * 
          * @return  The zero matrix.
          */
-        static constexpr Matrix4<T> Zero () noexcept
+        static constexpr Matrix2<T> Zero () noexcept
         {
-            return Matrix4<T> {
-                ZERO<T>, ZERO<T>, ZERO<T>, ZERO<T>,
-                ZERO<T>, ZERO<T>, ZERO<T>, ZERO<T>,
-                ZERO<T>, ZERO<T>, ZERO<T>, ZERO<T>,
-                ZERO<T>, ZERO<T>, ZERO<T>, ZERO<T>            
+            return Matrix2<T> {
+                ZERO<T>, ZERO<T>,
+                ZERO<T>, ZERO<T>          
             };
         }
 
@@ -101,7 +96,7 @@ namespace ace
          * @return  `true` if the matrices' elements are equal; `false` if not.
          */
         constexpr bool operator== (
-            const Matrix4<T>&   pOther
+            const Matrix2<T>&   pOther
         ) const noexcept
         {
             for (std::size_t i = 0; i < COUNT; ++i)
@@ -125,7 +120,7 @@ namespace ace
          *          `false` otherwise.
          */
         constexpr bool operator!= (
-            const Matrix4<T>&   pOther
+            const Matrix2<T>&   pOther
         ) const noexcept
         {
             for (std::size_t i = 0; i < COUNT; ++i)
@@ -184,8 +179,8 @@ namespace ace
          * 
          * @return  This matrix.
          */
-        constexpr Matrix4<T>& operator+= (
-            const Matrix4<T>&   pOther
+        constexpr Matrix2<T>& operator+= (
+            const Matrix2<T>&   pOther
         ) noexcept
         {
             for (std::size_t i = 0; i < COUNT; ++i)
@@ -204,9 +199,9 @@ namespace ace
          * 
          * @return  A matrix containing the element sums.
          */
-        friend constexpr Matrix4<T> operator+ (
-            Matrix4<T>          pLeft,
-            const Matrix4<T>&   pRight
+        friend constexpr Matrix2<T> operator+ (
+            Matrix2<T>          pLeft,
+            const Matrix2<T>&   pRight
         ) noexcept
         {
             return pLeft += pRight;
@@ -220,8 +215,8 @@ namespace ace
          * 
          * @return  This matrix.
          */
-        constexpr Matrix4<T>& operator-= (
-            const Matrix4<T>&   pOther
+        constexpr Matrix2<T>& operator-= (
+            const Matrix2<T>&   pOther
         ) noexcept
         {
             for (std::size_t i = 0; i < COUNT; ++i)
@@ -240,9 +235,9 @@ namespace ace
          * 
          * @return  A matrix containing the element differences.
          */
-        friend constexpr Matrix4<T> operator- (
-            Matrix4<T>          pLeft,
-            const Matrix4<T>&   pRight
+        friend constexpr Matrix2<T> operator- (
+            Matrix2<T>          pLeft,
+            const Matrix2<T>&   pRight
         ) noexcept
         {
             return pLeft -= pRight;
@@ -256,19 +251,19 @@ namespace ace
          * 
          * @return  A matrix containing the product of the two matrices.
          */
-        friend constexpr Matrix4<T> operator* (
-            const Matrix4<T>&   pLeft,
-            const Matrix4<T>&   pRight
+        friend constexpr Matrix2<T> operator* (
+            const Matrix2<T>&   pLeft,
+            const Matrix2<T>&   pRight
         ) noexcept
         {
-            Matrix4<T> lResult;
+            Matrix2<T> lResult;
 
-            for (std::size_t lColumn = 0; lColumn < Matrix4<T>::SIZE; ++lColumn)
+            for (std::size_t lColumn = 0; lColumn < Matrix2<T>::SIZE; ++lColumn)
             {
-                for (std::size_t lRow = 0; lRow < Matrix4<T>::SIZE; ++lRow)
+                for (std::size_t lRow = 0; lRow < Matrix2<T>::SIZE; ++lRow)
                 {
                     T lSum = ZERO<T>;
-                    for (std::size_t i = 0; i < Matrix4<T>::SIZE; ++i)
+                    for (std::size_t i = 0; i < Matrix2<T>::SIZE; ++i)
                     {
                         lSum += pLeft(lRow, i) * pRight(i, lColumn);
                     }
@@ -291,23 +286,14 @@ namespace ace
          *
          * @return  A column-vector containing the product of the two.
          */
-        friend constexpr Vector4<T> operator* (
-            const Matrix4<T>&   pLeft,
-            const Vector4<T>&   pRight
+        friend constexpr Vector2<T> operator* (
+            const Matrix2<T>&   pLeft,
+            const Vector2<T>&   pRight
         ) noexcept
         {
-            return Vector4<T> {
-                pLeft(0, 0) * pRight.mX + pLeft(0, 1) * pRight.mY +
-                pLeft(0, 2) * pRight.mZ + pLeft(0, 3) * pRight.mW,
-                
-                pLeft(1, 0) * pRight.mX + pLeft(1, 1) * pRight.mY +
-                pLeft(1, 2) * pRight.mZ + pLeft(1, 3) * pRight.mW,
-                
-                pLeft(2, 0) * pRight.mX + pLeft(2, 1) * pRight.mY +
-                pLeft(2, 2) * pRight.mZ + pLeft(2, 3) * pRight.mW,
-                
-                pLeft(3, 0) * pRight.mX + pLeft(3, 1) * pRight.mY +
-                pLeft(3, 2) * pRight.mZ + pLeft(3, 3) * pRight.mW
+            return Vector2<T> {
+                pLeft(0, 0) * pRight.mX + pLeft(0, 1) * pRight.mY,                
+                pLeft(1, 0) * pRight.mX + pLeft(1, 1) * pRight.mY           
             };
         }
 
@@ -320,23 +306,14 @@ namespace ace
          * 
          * @return  A row-vector containing the product of the two.
          */
-        friend constexpr Vector4<T> operator* (
-            const Vector4<T>&   pLeft,
-            const Matrix4<T>&   pRight
+        friend constexpr Vector2<T> operator* (
+            const Vector2<T>&   pLeft,
+            const Matrix2<T>&   pRight
         ) noexcept
         {
-            return Vector4<T> {
-                pLeft.mX * pRight(0, 0) + pLeft.mY * pRight(1, 0) +
-                pLeft.mZ * pRight(2, 0) + pLeft.mW * pRight(3, 0),
-                
-                pLeft.mX * pRight(0, 1) + pLeft.mY * pRight(1, 1) +
-                pLeft.mZ * pRight(2, 1) + pLeft.mW * pRight(3, 1),
-                
-                pLeft.mX * pRight(0, 2) + pLeft.mY * pRight(1, 2) +
-                pLeft.mZ * pRight(2, 2) + pLeft.mW * pRight(3, 2),
-                
-                pLeft.mX * pRight(0, 3) + pLeft.mY * pRight(1, 3) +
-                pLeft.mZ * pRight(2, 3) + pLeft.mW * pRight(3, 3)
+            return Vector2<T> {
+                pLeft.mX * pRight(0, 0) + pLeft.mY * pRight(1, 0),                
+                pLeft.mX * pRight(0, 1) + pLeft.mY * pRight(1, 1)
             };
         }
 
@@ -350,7 +327,7 @@ namespace ace
          * 
          * @return  This matrix.
          */
-        constexpr Matrix4<T>& operator*= (
+        constexpr Matrix2<T>& operator*= (
             const T pScalar
         ) noexcept
         {
@@ -371,8 +348,8 @@ namespace ace
          * 
          * @return  A matrix containing the element products.
          */
-        friend constexpr Matrix4<T> operator* (
-            Matrix4<T>      pLeft,
+        friend constexpr Matrix2<T> operator* (
+            Matrix2<T>      pLeft,
             const T         pRight
         ) noexcept
         {
@@ -388,9 +365,9 @@ namespace ace
          * 
          * @return  A matrix containing the element products.
          */
-        friend constexpr Matrix4<T> operator* (
+        friend constexpr Matrix2<T> operator* (
             const T         pLeft,
-            Matrix4<T>      pRight
+            Matrix2<T>      pRight
         ) noexcept
         {
             return pRight *= pLeft;
@@ -404,7 +381,7 @@ namespace ace
          * 
          * @return  This matrix.
          */
-        constexpr Matrix4<T>& operator/= (
+        constexpr Matrix2<T>& operator/= (
             const T pScalar
         ) noexcept
         {
@@ -427,8 +404,8 @@ namespace ace
          * 
          * @return  A matrix containing the element quotients.
          */
-        friend constexpr Matrix4<T> operator/ (
-            Matrix4<T>      pLeft,
+        friend constexpr Matrix2<T> operator/ (
+            Matrix2<T>      pLeft,
             const T         pRight
         ) noexcept
         {
@@ -443,9 +420,9 @@ namespace ace
          * 
          * @return  The transposed matrix.
          */
-        constexpr Matrix4<T> Transpose () const noexcept
+        constexpr Matrix2<T> Transpose () const noexcept
         {
-            Matrix4<T> lResult;
+            Matrix2<T> lResult;
 
             for (std::size_t lRow = 0; lRow < SIZE; ++lRow)
             {
@@ -466,31 +443,7 @@ namespace ace
         constexpr T Determinant () const noexcept
         {
             #define M(r, c) (*this)(r, c)
-            return
-                M(0, 3) * M(1, 2) * M(2, 1) * M(3, 0) - 
-                M(0, 2) * M(1, 3) * M(2, 1) * M(3, 0) - 
-                M(0, 3) * M(1, 1) * M(2, 2) * M(3, 0) + 
-                M(0, 1) * M(1, 3) * M(2, 2) * M(3, 0) + 
-                M(0, 2) * M(1, 1) * M(2, 3) * M(3, 0) - 
-                M(0, 1) * M(1, 2) * M(2, 3) * M(3, 0) - 
-                M(0, 3) * M(1, 2) * M(2, 0) * M(3, 1) + 
-                M(0, 2) * M(1, 3) * M(2, 0) * M(3, 1) + 
-                M(0, 3) * M(1, 0) * M(2, 2) * M(3, 1) - 
-                M(0, 0) * M(1, 3) * M(2, 2) * M(3, 1) - 
-                M(0, 2) * M(1, 0) * M(2, 3) * M(3, 1) + 
-                M(0, 0) * M(1, 2) * M(2, 3) * M(3, 1) + 
-                M(0, 3) * M(1, 1) * M(2, 0) * M(3, 2) - 
-                M(0, 1) * M(1, 3) * M(2, 0) * M(3, 2) - 
-                M(0, 3) * M(1, 0) * M(2, 1) * M(3, 2) + 
-                M(0, 0) * M(1, 3) * M(2, 1) * M(3, 2) +
-                M(0, 1) * M(1, 0) * M(2, 3) * M(3, 2) -
-                M(0, 0) * M(1, 1) * M(2, 3) * M(3, 2) -
-                M(0, 2) * M(1, 1) * M(2, 0) * M(3, 3) +
-                M(0, 1) * M(1, 2) * M(2, 0) * M(3, 3) +
-                M(0, 2) * M(1, 0) * M(2, 1) * M(3, 3) -
-                M(0, 0) * M(1, 2) * M(2, 1) * M(3, 3) -
-                M(0, 1) * M(1, 0) * M(2, 2) * M(3, 3) +
-                M(0, 0) * M(1, 1) * M(2, 2) * M(3, 3);
+            return M(0, 0) * M(1, 1) - M(0, 1) * M(1, 0);
             #undef M
         }
 
@@ -500,7 +453,7 @@ namespace ace
          * @return  The inverse of the matrix, if it exists; otherwise, a zero
          *          matrix.
          */
-        constexpr Matrix4<T> Inverse () const noexcept
+        constexpr Matrix2<T> Inverse () const noexcept
         { 
             // Check the determinant first. If zero, then this is a singular
             // matrix, and we cannot calculate the inverse. Return a zero
@@ -522,80 +475,15 @@ namespace ace
             #define M(r, c) (*this)(r, c)
 
             // Calculate the cofactors for the adjugate matrix.
-            Matrix4<T> lAdjugate;
-            lAdjugate(0, 0) =   M(1, 1) * M(2, 2) * M(3, 3) - M(1, 1) * M(2, 3) * M(3, 2) 
-                            -   M(2, 1) * M(1, 2) * M(3, 3) + M(2, 1) * M(1, 3) * M(3, 2)
-                            +   M(3, 1) * M(1, 2) * M(2, 3) - M(3, 1) * M(1, 3) * M(2, 2);
-            lAdjugate(0, 1) =  -M(0, 1) * M(2, 2) * M(3, 3) + M(0, 1) * M(2, 3) * M(3, 2)
-                            +   M(2, 1) * M(0, 2) * M(3, 3) - M(2, 1) * M(0, 3) * M(3, 2)
-                            -   M(3, 1) * M(0, 2) * M(2, 3) + M(3, 1) * M(0, 3) * M(2, 2);
-            lAdjugate(0, 2) =   M(0, 1) * M(1, 2) * M(3, 3) - M(0, 1) * M(1, 3) * M(3, 2)
-                            -   M(1, 1) * M(0, 2) * M(3, 3) + M(1, 1) * M(0, 3) * M(3, 2)
-                            +   M(3, 1) * M(0, 2) * M(1, 3) - M(3, 1) * M(0, 3) * M(1, 2);
-            lAdjugate(0, 3) =  -M(0, 1) * M(1, 2) * M(2, 3) + M(0, 1) * M(1, 3) * M(2, 2)
-                            +   M(1, 1) * M(0, 2) * M(2, 3) - M(1, 1) * M(0, 3) * M(2, 2)
-                            -   M(2, 1) * M(0, 2) * M(1, 3) + M(2, 1) * M(0, 3) * M(1, 2);
-            lAdjugate(1, 0) =  -M(1, 0) * M(2, 2) * M(3, 3) + M(1, 0) * M(2, 3) * M(3, 2)
-                            +   M(2, 0) * M(1, 2) * M(3, 3) - M(2, 0) * M(1, 3) * M(3, 2)
-                            -   M(3, 0) * M(1, 2) * M(2, 3) + M(3, 0) * M(1, 3) * M(2, 2);
-            lAdjugate(1, 1) =   M(0, 0) * M(2, 2) * M(3, 3) - M(0, 0) * M(2, 3) * M(3, 2)
-                            -   M(2, 0) * M(0, 2) * M(3, 3) + M(2, 0) * M(0, 3) * M(3, 2)
-                            +   M(3, 0) * M(0, 2) * M(2, 3) - M(3, 0) * M(0, 3) * M(2, 2);
-            lAdjugate(1, 2) =  -M(0, 0) * M(1, 2) * M(3, 3) + M(0, 0) * M(1, 3) * M(3, 2)
-                            +   M(1, 0) * M(0, 2) * M(3, 3) - M(1, 0) * M(0, 3) * M(3, 2)
-                            -   M(3, 0) * M(0, 2) * M(1, 3) + M(3, 0) * M(0, 3) * M(1, 2);
-            lAdjugate(1, 3) =   M(0, 0) * M(1, 2) * M(2, 3) - M(0, 0) * M(1, 3) * M(2, 2)
-                            -   M(1, 0) * M(0, 2) * M(2, 3) + M(1, 0) * M(0, 3) * M(2, 2)
-                            +   M(2, 0) * M(0, 2) * M(1, 3) - M(2, 0) * M(0, 3) * M(1, 2);
-            lAdjugate(2, 0) =   M(1, 0) * M(2, 1) * M(3, 3) - M(1, 0) * M(2, 3) * M(3, 1)
-                            -   M(2, 0) * M(1, 1) * M(3, 3) + M(2, 0) * M(1, 3) * M(3, 1)
-                            +   M(3, 0) * M(1, 1) * M(2, 3) - M(3, 0) * M(1, 3) * M(2, 1);
-            lAdjugate(2, 1) =  -M(0, 0) * M(2, 1) * M(3, 3) + M(0, 0) * M(2, 3) * M(3, 1)
-                            +   M(2, 0) * M(0, 1) * M(3, 3) - M(2, 0) * M(0, 3) * M(3, 1)
-                            -   M(3, 0) * M(0, 1) * M(2, 3) + M(3, 0) * M(0, 3) * M(2, 1);
-            lAdjugate(2, 2) =   M(0, 0) * M(1, 1) * M(3, 3) - M(0, 0) * M(1, 3) * M(3, 1)
-                            -   M(1, 0) * M(0, 1) * M(3, 3) + M(1, 0) * M(0, 3) * M(3, 1)
-                            +   M(3, 0) * M(0, 1) * M(1, 3) - M(3, 0) * M(0, 3) * M(1, 1);
-            lAdjugate(2, 3) =  -M(0, 0) * M(1, 1) * M(2, 3) + M(0, 0) * M(1, 3) * M(2, 1)
-                            +   M(1, 0) * M(0, 1) * M(2, 3) - M(1, 0) * M(0, 3) * M(2, 1)
-                            -   M(2, 0) * M(0, 1) * M(1, 3) + M(2, 0) * M(0, 3) * M(1, 1);
-            lAdjugate(3, 0) =  -M(1, 0) * M(2, 1) * M(3, 2) + M(1, 0) * M(2, 2) * M(3, 1)
-                            +   M(2, 0) * M(1, 1) * M(3, 2) - M(2, 0) * M(1, 2) * M(3, 1)
-                            -   M(3, 0) * M(1, 1) * M(2, 2) + M(3, 0) * M(1, 2) * M(2, 1);
-            lAdjugate(3, 1) =   M(0, 0) * M(2, 1) * M(3, 2) - M(0, 0) * M(2, 2) * M(3, 1)
-                            -   M(2, 0) * M(0, 1) * M(3, 2) + M(2, 0) * M(0, 2) * M(3, 1)
-                            +   M(3, 0) * M(0, 1) * M(2, 2) - M(3, 0) * M(0, 2) * M(2, 1);
-            lAdjugate(3, 2) =  -M(0, 0) * M(1, 1) * M(3, 2) + M(0, 0) * M(1, 2) * M(3, 1)
-                            +   M(1, 0) * M(0, 1) * M(3, 2) - M(1, 0) * M(0, 2) * M(3, 1)
-                            -   M(3, 0) * M(0, 1) * M(1, 2) + M(3, 0) * M(0, 2) * M(1, 1);
-            lAdjugate(3, 3) =   M(0, 0) * M(1, 1) * M(2, 2) - M(0, 0) * M(1, 2) * M(2, 1)
-                            -   M(1, 0) * M(0, 1) * M(2, 2) + M(1, 0) * M(0, 2) * M(2, 1)
-                            +   M(2, 0) * M(0, 1) * M(1, 2) - M(2, 0) * M(0, 2) * M(1, 1);
-
+            Matrix2<T> lAdjugate;
+            lAdjugate(0, 0) =  M(1, 1);
+            lAdjugate(0, 1) = -M(0, 1);
+            lAdjugate(1, 0) = -M(1, 0);
+            lAdjugate(1, 1) =  M(0, 0);
             #undef M
 
             // Divide the adjugate matrix by the determinant to get the inverse.
             return lAdjugate / lDeterminant;
-        }
-
-        /**
-         * @brief   Calculates a "normal matrix" from this matrix, which is
-         *          "the transpose of the inverse of the upper-left 3x3 part of
-         *          [this matrix]".
-         * 
-         * @return  The normal matrix.
-         * 
-         * @cite    `https://learnopengl.com/Lighting/Basic-Lighting`
-         */
-        constexpr Matrix3<T> NormalMatrix () const noexcept
-        {
-            // - Get the upper-left 3x3 part of this matrix.
-            // - Calculate the inverse of that matrix, then transpose it.
-            return Matrix3<T> {
-                (*this)(0, 0), (*this)(1, 0), (*this)(2, 0),
-                (*this)(0, 1), (*this)(1, 1), (*this)(2, 1),
-                (*this)(0, 2), (*this)(1, 2), (*this)(2, 2)
-            }.Inverse().Transpose();
         }
 
     };
@@ -612,11 +500,11 @@ namespace ace
      */
     template <typename T>
     inline constexpr bool EpsilonEqual (
-        const Matrix4<T>&   pFirst,
-        const Matrix4<T>&   pSecond
+        const Matrix2<T>&   pFirst,
+        const Matrix2<T>&   pSecond
     ) noexcept
     {
-        for (std::size_t i = 0; i < Matrix4<T>::COUNT; ++i)
+        for (std::size_t i = 0; i < Matrix2<T>::COUNT; ++i)
         {
             if (EpsilonEqual<T>(pFirst.mI[i], pSecond.mI[i]) == false)
             {
@@ -627,10 +515,10 @@ namespace ace
         return true;
     }
     
-    using Matrix4f = Matrix4<float>;
-    using Matrix4d = Matrix4<double>;
-    using Matrix4i = Matrix4<std::int32_t>;
-    using Matrix4u = Matrix4<std::uint32_t>;
-    using Matrix4b = Matrix4<bool>;
+    using Matrix2f = Matrix2<float>;
+    using Matrix2d = Matrix2<double>;
+    using Matrix2i = Matrix2<std::int32_t>;
+    using Matrix2u = Matrix2<std::uint32_t>;
+    using Matrix2b = Matrix2<bool>;
 
 }
