@@ -8,6 +8,7 @@
 #include <MathsTesting/TestMatrix2.hpp>
 #include <MathsTesting/TestMatrix3.hpp>
 #include <MathsTesting/TestMatrix4.hpp>
+#include <MathsTesting/TestQuat4.hpp>
 
 #define FN(F) { #F, F }
 
@@ -58,7 +59,16 @@ static const std::unordered_map<std::string, std::function<bool()>>
         FN(AceMatrix4::TestDeterminant),
         FN(AceMatrix4::TestInverse),
         FN(AceMatrix4::TestTranspose),
-        FN(AceMatrix4::TestNormalMatrix)
+        FN(AceMatrix4::TestNormalMatrix),
+        FN(AceQuat4::TestIdentity),
+        FN(AceQuat4::TestFromAxisAngle),
+        FN(AceQuat4::TestFromEulerAngles),
+        FN(AceQuat4::TestToVector4),
+        FN(AceQuat4::TestNormalized),
+        FN(AceQuat4::TestConjugateInverse),
+        FN(AceQuat4::TestNormalizedLerp),
+        FN(AceQuat4::TestSphericalLerp),
+        FN(AceQuat4::TestSphericalLerp180)
     };
 
 int main ()

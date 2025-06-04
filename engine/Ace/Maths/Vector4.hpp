@@ -28,7 +28,7 @@ namespace ace
          * @brief   The default constructor initializes the vector's components
          *          to zero.
          */
-        constexpr Vector4<T> () :
+        constexpr Vector4<T> () noexcept :
             mX      { ZERO<T> },
             mY      { ZERO<T> },
             mZ      { ZERO<T> },
@@ -48,7 +48,7 @@ namespace ace
             const T pY,
             const T pZ,
             const T pW
-        ) :
+        ) noexcept  :
             mX  { pX },
             mY  { pY },
             mZ  { pZ },
@@ -131,6 +131,26 @@ namespace ace
                 mY == pOther.mY &&
                 mZ == pOther.mZ &&
                 mW == pOther.mW
+            );
+        }
+
+        /**
+         * @brief   Checks to see if this vector's and the given vector's
+         *          components are not all equal.
+         * 
+         * @param   pOther  The other vector.
+         * 
+         * @return  `true` if the vectors are not equal; `false` otherwise.
+         */
+        constexpr bool operator!= (
+            const Vector4<T>&   pOther
+        ) const noexcept
+        {
+            return (
+                mX != pOther.mX ||
+                mY != pOther.mY ||
+                mZ != pOther.mZ ||
+                mW != pOther.mW
             );
         }
 
