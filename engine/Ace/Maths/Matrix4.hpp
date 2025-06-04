@@ -312,6 +312,27 @@ namespace ace
         }
 
         /**
+         * @brief   Performs a multiplication between this matrix and the given
+         *          column-vector.
+         * 
+         * @param   pLeft   The left matrix.
+         * @param   pRight  The right column-vector.
+         *
+         * @return  A column-vector containing the product of the two.
+         */
+        friend constexpr Vector3<T> operator* (
+            const Matrix4<T>&   pLeft,
+            const Vector3<T>&   pRight
+        ) noexcept
+        {
+            return Vector3<T> {
+                pLeft(0, 0) * pRight.mX + pLeft(0, 1) * pRight.mY + pLeft(0, 2) * pRight.mZ + pLeft(0, 3) * 1.0f,
+                pLeft(1, 0) * pRight.mX + pLeft(1, 1) * pRight.mY + pLeft(1, 2) * pRight.mZ + pLeft(1, 3) * 1.0f,
+                pLeft(2, 0) * pRight.mX + pLeft(2, 1) * pRight.mY + pLeft(2, 2) * pRight.mZ + pLeft(2, 3) * 1.0f
+            };
+        }
+
+        /**
          * @brief   Performs a multiplication between the given row-vector and
          *          this matrix.
          * 

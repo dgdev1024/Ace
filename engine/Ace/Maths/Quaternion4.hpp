@@ -444,6 +444,37 @@ namespace ace
             return lResult;
         }
 
+        /**
+         * @brief   Uses this quaternion to rotate the given 3D vector.
+         * 
+         * @param   pVector     The vector to be rotated.
+         * 
+         * @return  The rotated vector.
+         * 
+         * @note    This method assumes that this quaternion is normalized. Be
+         *          sure to normalize this quaternion if not already.
+         */
+        constexpr Vector3<T> Rotate (
+            const Vector3<T>&   pVector
+        ) const noexcept
+        {
+            // Separate out the vector and scalar parts of the quaternion.
+            Vector3<T>  lVector { mX, mY, mZ };
+            T           lScalar = mW;
+
+            // Get the dot and cross products of the vector portion with the
+            // given vector. Also, get the vector portion's length squared.
+            Vector3<T>  lCross = lVector.Cross(pVector);
+            T           lDot = lVector.Dot(pVector);
+            T           lLengthSquared = lVector.LengthSquared();
+
+            // Perform the rotation and return the result.
+            return
+                (pVector * ((lScalar * lScalar) - lLengthSquared)) +
+                (lVector * (TWO<T> * lDot)) +
+                (lCross * (TWO<T> * lScalar));
+        }
+
     };
 
     /**
@@ -507,6 +538,25 @@ namespace ace
     ) noexcept
     {
         return pStart.SphericalLerp(pEnd, pInterval);
+    }
+
+    /**
+     * @brief   Uses the given quaternion to rotate the given vector.
+     * 
+     * @tparam  T   The floating-point type represented.
+     * 
+     * @param   pQuaternion The quaternion to rotate with.
+     * @param   pVector     The vector to be rotated.
+     * 
+     * @return  The rotated vector.
+     */
+    template <FloatingPoint T>
+    inline constexpr Vector3<T> Rotate (
+        const Quaternion4<T>&   pQuaternion,
+        const Vector3<T>&       pVector
+    ) noexcept
+    {
+        return pQuaternion.Rotate(pVector);
     }
 
     /**

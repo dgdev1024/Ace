@@ -16,4 +16,5 @@ namespace AceQuat4
     bool TestNormalizedLerp ();
     bool TestSphericalLerp ();
     bool TestSphericalLerp180 ();
+    bool TestRotate ();
 }

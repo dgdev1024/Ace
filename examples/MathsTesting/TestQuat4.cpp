@@ -7,6 +7,9 @@
 
 namespace AceQuat4
 {
+    static const float HALF_PI = ace::PI<float> / 2.0f;
+    static const float QUARTER_PI = ace::PI<float> / 4.0f;
+
     bool TestIdentity ()
     {
         ace::Quaternion4f lQuat;
@@ -189,6 +192,49 @@ namespace AceQuat4
             ace::EpsilonEqual(lSlerp, lExpected),
             "Quaternion halfway spherical lerp test failed."
         );
+
+        return true;
+    }
+
+    bool TestRotate ()
+    {
+        {
+            ace::Vector3f       lAxis = ace::Vector3f::Front();
+            ace::Quaternion4f   lQuat { lAxis, HALF_PI };
+            ace::Vector3f       lVector = ace::Vector3f::Right();
+            ace::Vector3f       lOut = ace::Rotate(lQuat, lVector);
+            ace::Vector3f       lExpected = ace::Vector3f::Up();
+
+            ACE_EXPECT(
+                ace::EpsilonEqual(lOut, lExpected),
+                "90 degree Z-axis quaternion rotation test failed."
+            );
+        }
+
+        {
+            ace::Vector3f       lAxis = ace::Vector3f::Right();
+            ace::Quaternion4f   lQuat { lAxis, ace::PI<float> };
+            ace::Vector3f       lVector = ace::Vector3f::Up();
+            ace::Vector3f       lOut = ace::Rotate(lQuat, lVector);
+            ace::Vector3f       lExpected = -ace::Vector3f::Up();
+
+            ACE_EXPECT(
+                ace::EpsilonEqual(lOut, lExpected),
+                "180 degree X-axis quaternion rotation test failed."
+            );
+        }
+        {
+            ace::Vector3f       lAxis = ace::Vector3f::Front();
+            ace::Quaternion4f   lQuat { lAxis, QUARTER_PI };
+            ace::Vector3f       lVector { 1.0f, 1.0f, 0.0f };
+            ace::Vector3f       lOut = ace::Rotate(lQuat, lVector.Normalize());
+            ace::Vector3f       lExpected = ace::Vector3f::Up();
+
+            ACE_EXPECT(
+                ace::EpsilonEqual(lOut, lExpected),
+                "45 degree Z-axis quaternion rotation test failed."
+            );
+        }
 
         return true;
     }
