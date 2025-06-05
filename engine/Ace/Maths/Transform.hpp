@@ -174,4 +174,45 @@ namespace ace
         };
     }
 
+    /**
+     * @brief   Generates a view transformation matrix used for transforming
+     *          world-space coordinates into camera-space coordinates.
+     * 
+     * @tparam  T   The floating point type represented.
+     * 
+     * @param   pEye    The position of the camera in world-space.
+     * @param   pCenter The target point in world-space (what is the camera looking at?).
+     * @param   pUp     The upward-facing direction vector. This should be a
+     *                  normalized unit vector.
+     * 
+     * @return  The generated view transformation matrix.
+     */
+    template <FloatingPoint T>
+    inline constexpr Matrix4<T> LookAt (
+        const Vector3<T>&   pEye,
+        const Vector3<T>&   pCenter,
+        const Vector3<T>&   pUp
+    ) noexcept
+    {
+        // Calculate and normalize the actual front-, right- and upward-facing
+        // direction vectors.
+        Vector3<T>  lFront      = (pCenter - pEye).Normalized(),
+                    lRight      = Cross(lFront, pUp).Normalized(),
+                    lUp         = Cross(lRight, lFront);
+
+        // Calculate the dot products between each of the above-calculated
+        // vectors with the eye vector.
+        T           lDotRight   = -Dot(lRight, pEye),
+                    lDotUp      = -Dot(lUp, pEye),
+                    lDotFront   =  Dot(lFront, pEye);
+
+        // Generate and return the transformation matrix.
+        return Matrix4<T> {
+            lRight.mX,  lUp.mX,     -lFront.mX, ZERO<T>,
+            lRight.mY,  lUp.mY,     -lFront.mY, ZERO<T>,
+            lRight.mZ,  lUp.mZ,     -lFront.mZ, ZERO<T>,
+            lDotRight,  lDotUp,     lDotFront,  ONE<T>
+        };
+    }
+
 }

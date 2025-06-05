@@ -13,4 +13,5 @@ namespace AceTransform
     bool TestRotateY ();
     bool TestRotateZ ();
     bool TestRotateArbitrary ();
+    bool TestLookAt ();
 }

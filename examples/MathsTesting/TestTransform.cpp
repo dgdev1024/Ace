@@ -7,7 +7,7 @@
 
 namespace AceTransform
 {
-    static constexpr float HALF_PI = ace::PI<float> / ace::TWO<float>;
+    static const float HALF_PI = ace::PI<float> / ace::TWO<float>;
 
     bool TestScale ()
     {
@@ -96,6 +96,44 @@ namespace AceTransform
             ace::EpsilonEqual(lOut, lExpected),
             "Arbitrary axis rotation test failed."
         );
+
+        return true;
+    }
+
+    bool TestLookAt ()
+    {
+        {
+            ace::Vector3f lEye { 0.0f, 0.0f, 0.0f },
+                lCenter { 0.0f, 0.0f, -1.0f },
+                lUp { 0.0f, 1.0f, 0.0f };
+
+            ace::Matrix4f lLookAt = ace::LookAt(lEye, lCenter, lUp),
+                lExpected = ace::Matrix4f::Identity();
+
+            ACE_EXPECT(
+                ace::EpsilonEqual(lLookAt, lExpected),
+                "LookAt identity test failed."
+            );
+        }
+
+        {
+            ace::Vector3f lEye { 0.0f, 0.0f, 1.0f },
+                lCenter { 0.0f, 0.0f, 0.0f },
+                lUp { 0.0f, 1.0f, 0.0f };
+
+            ace::Matrix4f lLookAt = ace::LookAt(lEye, lCenter, lUp),
+                lExpected {
+                    1.0f, 0.0f, 0.0f, 0.0f,
+                    0.0f, 1.0f, 0.0f, 0.0f,
+                    0.0f, 0.0f, 1.0f, 0.0f,
+                    0.0f, 0.0f, -1.0f, 1.0f
+                };
+
+            ACE_EXPECT(
+                ace::EpsilonEqual(lLookAt, lExpected),
+                "LookAt forward test failed."
+            );
+        }
 
         return true;
     }

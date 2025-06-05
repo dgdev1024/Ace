@@ -10,6 +10,7 @@
 #include <MathsTesting/TestMatrix4.hpp>
 #include <MathsTesting/TestQuat4.hpp>
 #include <MathsTesting/TestTransform.hpp>
+#include <MathsTesting/TestProjection.hpp>
 
 #define FN(F) { #F, F }
 
@@ -76,7 +77,11 @@ static const std::unordered_map<std::string, std::function<bool()>>
         FN(AceTransform::TestRotateX),
         FN(AceTransform::TestRotateY),
         FN(AceTransform::TestRotateZ),
-        FN(AceTransform::TestRotateArbitrary)
+        FN(AceTransform::TestRotateArbitrary),
+        FN(AceTransform::TestLookAt),
+        FN(AceProjection::TestOrtho),
+        FN(AceProjection::TestOrthoExtent),
+        FN(AceProjection::TestPerspective)
     };
 
 int main ()
